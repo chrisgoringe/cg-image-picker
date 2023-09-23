@@ -43,5 +43,3 @@ async def make_image_selection(request):
     post = await request.post()
     ImageChooser.message = post.get("selection")
     return web.json_response({})
-
-pass
