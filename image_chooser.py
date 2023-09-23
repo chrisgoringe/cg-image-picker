@@ -15,7 +15,7 @@ class PreviewImageChooser(PreviewImage):
 
     def func(self, **kwargs):
         ret = self.save_images(**kwargs)
-        ret['result'] = (kwargs['images'],),
+        ret['result'] = (kwargs['images'],)
         return ret  
 
 class ImageChooser(BaseNode):
