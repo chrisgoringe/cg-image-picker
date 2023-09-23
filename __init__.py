@@ -19,6 +19,7 @@ module_js_directory = os.path.join(module_root_directory, "js")
 NODE_CLASS_MAPPINGS = { 
     "Image Chooser" : ImageChooser,
     "Preview for Image Chooser" : PreviewImageChooser,
+    "Latent Chooser" : LatentChooser,
                       }
 
 

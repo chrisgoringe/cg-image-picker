@@ -17,21 +17,42 @@ class PreviewImageChooser(PreviewImage):
         ret = self.save_images(**kwargs)
         ret['result'] = (kwargs['images'],)
         return ret  
+    
+class Chooser:
+    message = None
 
 class ImageChooser(BaseNode):
     REQUIRED = {"images" : ("IMAGE", {})}
     RETURN_TYPES = ("IMAGE",)
     RETURN_NAMES = ("image",)
     CATEGORY = "utilities/control"
-    message = None
 
     def func(self, images):
-        while(self.message is None):
+        while(Chooser.message is None):
             time.sleep(1)
-        i = (int(self.message)-1) % images.shape[0]
-        ImageChooser.message = None
+        i = (int(Chooser.message)-1) % images.shape[0]
+        Chooser.message = None
         image = images[i].unsqueeze(0)
         return (image,)
+    
+    def IS_CHANGED(self, **kwargs):
+        return float('nan')
+    
+class LatentChooser(BaseNode):
+    REQUIRED = {"latents" : ("LATENT", {})}
+    RETURN_TYPES = ("LATENT",)
+    RETURN_NAMES = ("latent",)
+    CATEGORY = "utilities/control"
+
+    def func(self, latents):
+        while(Chooser.message is None):
+            time.sleep(1)
+        i = (int(Chooser.message)-1) % latents['samples'].shape[0]
+        Chooser.message = None
+        latent = {}
+        for key in latents:
+            latent[key] = latents[key][i].unsqueeze(0)
+        return (latent,)
     
     def IS_CHANGED(self, **kwargs):
         return float('nan')
@@ -41,5 +62,5 @@ routes = PromptServer.instance.routes
 @routes.post('/image_selection')
 async def make_image_selection(request):
     post = await request.post()
-    ImageChooser.message = post.get("selection")
+    Chooser.message = post.get("selection")
     return web.json_response({})
