@@ -33,7 +33,10 @@ class MessageHolder:
 class ImageChooser():
     @classmethod
     def INPUT_TYPES(s):
-        return {"required": {"images" : ("IMAGE", {}), "id" : ("INT", {"default":42, "min":0, "max": 100000000})}}
+        return {"required": {
+            "images" : ("IMAGE", {}), 
+            "id" : ("INT", {"default":42, "min":0, "max": 100000000}),
+            }}
 
     RETURN_TYPES = ("IMAGE",)
     RETURN_NAMES = ("image",)
@@ -53,7 +56,10 @@ class ImageChooser():
 class LatentChooser():
     @classmethod
     def INPUT_TYPES(s):
-        return {"required": {"latents" : ("LATENT", {}), "id" : ("INT", {"default":42})}}
+        return {"required": {
+            "latents" : ("LATENT", {}), 
+            "id" : ("INT", {"default":42, "min":0, "max": 100000000}),
+        }}
     RETURN_TYPES = ("LATENT",)
     RETURN_NAMES = ("latent",)
     CATEGORY = "utilities/control"
@@ -62,6 +68,7 @@ class LatentChooser():
     def func(self, latents, id):
         while not MessageHolder.haveMessage(id):
             time.sleep(1)
+
         i = (int(MessageHolder.popMessage(id))-1) % latents['samples'].shape[0]
         latent = {}
         for key in latents:

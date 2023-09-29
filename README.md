@@ -26,6 +26,12 @@ This dog has that workflow saved for you to drop onto ComfyUI:
 
 Or just download the [workflow](docs/workflow.json)
 
+## id
+
+The node has an id which randomly changes every time you use it - hopefully this means that you can use the node on multiple workflows or multiple times on the same workflow without them interfering. Raise an issue if this doesn't work. Going to see if I can work out how to hide it.
+
+The id must be a widget. Don't make it an input. Don't know why you would want to, but don't.
+
 ## Latent Chooser
 
 If you want the rest of your workflow to start with the latent instead, use the `Latent Chooser` 
