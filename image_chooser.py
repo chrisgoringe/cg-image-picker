@@ -21,12 +21,14 @@ class MessageHolder:
     messages = {}
     @classmethod
     def addMessage(cls, id, message):
+        #print(f"Message added: {message} from id {id}")
         cls.messages[str(id)] = message
     @classmethod
     def haveMessage(cls, id):
         return str(id) in cls.messages
     @classmethod
     def popMessage(cls, id):
+        #print(f"Message read : {cls.messages.get(str(id),None)} for id {id}")
         return cls.messages.pop(str(id),None)
 
 
