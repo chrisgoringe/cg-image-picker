@@ -1,4 +1,3 @@
-from custom_nodes.cg_custom_core.base import BaseNode
 from server import PromptServer
 import time
 from aiohttp import web
@@ -18,37 +17,52 @@ class PreviewImageChooser(PreviewImage):
         ret['result'] = (kwargs['images'],)
         return ret  
     
-class Chooser:
-    message = None
+class MessageHolder:
+    messages = {}
+    @classmethod
+    def addMessage(cls, id, message):
+        cls.messages[str(id)] = message
+    @classmethod
+    def haveMessage(cls, id):
+        return str(id) in cls.messages
+    @classmethod
+    def popMessage(cls, id):
+        return cls.messages.pop(str(id),None)
 
-class ImageChooser(BaseNode):
-    REQUIRED = {"images" : ("IMAGE", {})}
+
+class ImageChooser():
+    @classmethod
+    def INPUT_TYPES(s):
+        return {"required": {"images" : ("IMAGE", {}), "id" : ("INT", {"default":42, "min":0, "max": 100000000})}}
+
     RETURN_TYPES = ("IMAGE",)
     RETURN_NAMES = ("image",)
     CATEGORY = "utilities/control"
+    FUNCTION = "func"
 
-    def func(self, images):
-        while(Chooser.message is None):
+    def func(self, images, id):
+        while not MessageHolder.haveMessage(id):
             time.sleep(1)
-        i = (int(Chooser.message)-1) % images.shape[0]
-        Chooser.message = None
+        i = (int(MessageHolder.popMessage(id))-1) % images.shape[0]
         image = images[i].unsqueeze(0)
         return (image,)
     
     def IS_CHANGED(self, **kwargs):
         return float('nan')
     
-class LatentChooser(BaseNode):
-    REQUIRED = {"latents" : ("LATENT", {})}
+class LatentChooser():
+    @classmethod
+    def INPUT_TYPES(s):
+        return {"required": {"latents" : ("LATENT", {}), "id" : ("INT", {"default":42})}}
     RETURN_TYPES = ("LATENT",)
     RETURN_NAMES = ("latent",)
     CATEGORY = "utilities/control"
+    FUNCTION = "func"
 
-    def func(self, latents):
-        while(Chooser.message is None):
+    def func(self, latents, id):
+        while not MessageHolder.haveMessage(id):
             time.sleep(1)
-        i = (int(Chooser.message)-1) % latents['samples'].shape[0]
-        Chooser.message = None
+        i = (int(MessageHolder.popMessage(id))-1) % latents['samples'].shape[0]
         latent = {}
         for key in latents:
             latent[key] = latents[key][i].unsqueeze(0)
@@ -62,5 +76,5 @@ routes = PromptServer.instance.routes
 @routes.post('/image_selection')
 async def make_image_selection(request):
     post = await request.post()
-    Chooser.message = post.get("selection")
+    MessageHolder.addMessage(post.get("id"), post.get("selection"))
     return web.json_response({})
