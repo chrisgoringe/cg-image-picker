@@ -10,8 +10,19 @@ NODE_CLASS_MAPPINGS = {
     "Image Chooser" : ImageChooser,
     "Preview for Image Chooser" : PreviewImageChooser,
     "Latent Chooser" : LatentChooser,
+    "Multi Latent Chooser" : MultiLatentChooser,
                       }
 
 __all__ = ['NODE_CLASS_MAPPINGS']
 
 shutil.copytree(module_js_directory, application_web_extensions_directory, dirs_exist_ok=True)
+
+try:
+    from custom_nodes.cg_custom_core import CC_VERSION
+except:
+    print("cg_custom_core not found - will try to install - you may need to restart afterwards")
+    from .install import installer
+    import os
+    import folder_paths
+    application_root_directory = os.path.dirname(folder_paths.__file__)
+    installer(os.path.join(application_root_directory,"custom_nodes"))
