@@ -42,6 +42,8 @@ The way I suggest you work is have everything upstream with fixed seeds, so when
 
 I'm going to look into allowing more than one selection to be passed through, [as suggested here](https://github.com/chrisgoringe/cg-image-picker/issues/1) but no promises.
 
+(update - there's an experimental node now, designed for use with Fabric, that allows two sets of multiple choices of latents - and lets you accumulate between runs. WIP.)
+
 ## Latent Chooser
 
 If you want the rest of your workflow to start with the latent instead, use the `Latent Chooser` 
