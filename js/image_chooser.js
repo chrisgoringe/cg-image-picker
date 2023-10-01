@@ -1,6 +1,13 @@
 import { app } from "../../../scripts/app.js";
 import { api } from "../../../scripts/api.js";
 
+function send_message(id, message) {
+    const body = new FormData();
+    body.append('message',message);
+    body.append('id', id);
+    api.fetchApi("/image_chooser_message", { method: "POST", body, });
+}
+
 app.registerExtension({
 	name: "cg.custom.image_chooser",
     async nodeCreated(node) {
@@ -15,20 +22,14 @@ app.registerExtension({
             const pk_widget = node.addWidget("combo", "choice", 1, () => {}, { values: [1,2,3,4,5,6,7,8] });
             const go_widget = node.addWidget("button", "go", "", (w) => {
                 if (app.runningNodeId===node.id.toString()) {
-                    const body = new FormData();
-                    body.append('message',w.options.pk.value);
-                    body.append('id', node.widgets[0].value);
-                    api.fetchApi("/image_chooser_message", { method: "POST", body, });
+                    send_message(node.widgets[0].value, node.widgets[1].value);
                 }
-            }, {'pk':pk_widget});
+            });
             const cancel_widget = node.addWidget("button", "cancel", "", (w) => {
                 if (app.runningNodeId===node.id.toString()) {
                     document.getElementById("autoQueueCheckbox").checked = false;
-                    const body = new FormData();
-                    body.append('message',0);
-                    body.append('id', node.widgets[0].value);
-                    api.fetchApi("/image_chooser_message", { method: "POST", body, });
-                    api.interrupt();                 
+                    api.interrupt();  
+                    send_message(node.widgets[0].value, '__cancel__');
                 }
             });
             go_widget.serialize = false;
@@ -45,25 +46,20 @@ app.registerExtension({
             node.widgets[0].value = Math.floor(Math.random() * 10000000);
             const go_widget = node.addWidget("button", "go", "", (w) => {
                 if (app.runningNodeId===node.id.toString()) {
-                    const body = new FormData();
-                    const message = {
-                        positive : node.widgets[1].value,
-                        negative : node.widgets[2].value,
-                        mode     : node.widgets[3].value,
-                    }
-                    body.append('message', JSON.stringify(message));
-                    body.append('id', node.widgets[0].value);
-                    api.fetchApi("/image_chooser_message", { method: "POST", body, });
+                    send_message(node.widgets[0].value, JSON.stringify(
+                        {
+                            positive : node.widgets[1].value,
+                            negative : node.widgets[2].value,
+                            mode     : node.widgets[3].value,
+                        }
+                    ))
                 }
             });
             const cancel_widget = node.addWidget("button", "cancel", "", (w) => {
                 if (app.runningNodeId===node.id.toString()) {
                     document.getElementById("autoQueueCheckbox").checked = false;
-                    const body = new FormData();
-                    body.append('message',0);
-                    body.append('id', node.widgets[0].value);
-                    api.fetchApi("/image_chooser_message", { method: "POST", body, });
-                    api.interrupt();                 
+                    api.interrupt(); 
+                    send_message(node.widgets[0].value, '__cancel__');        
                 }
             });
             go_widget.serialize = false;

@@ -5,6 +5,9 @@ from aiohttp import web
 from nodes import PreviewImage
 from custom_nodes.cg_custom_core.ui_decorator import ui_signal
 
+class Cancelled(Exception):
+    pass
+
 class PreviewImageChooser(PreviewImage):
     RETURN_TYPES = ("IMAGE",)
     RETURN_NAMES = ("images",)
@@ -23,64 +26,63 @@ class MessageHolder:
     messages = {}
     @classmethod
     def addMessage(cls, id, message):
-        #print(f"Message added: {message} from id {id}")
         cls.messages[str(id)] = message
+
     @classmethod
     def haveMessage(cls, id):
         return str(id) in cls.messages
+    
     @classmethod
     def popMessage(cls, id):
-        #print(f"Message read : {cls.messages.get(str(id),None)} for id {id}")
-        return cls.messages.pop(str(id),None)
+        r = cls.messages.pop(str(id),None)
+        if r == "__cancel__":
+            raise Cancelled()
+        return r
+    
+    @classmethod
+    def waitForMessage(cls, id, period = 0.1):
+        while not cls.haveMessage(id):
+            time.sleep(period)
 
-
-class ImageChooser():
+class BaseChooser():
+    CATEGORY = "utilities/control"
+    FUNCTION = "func"
+    def IS_CHANGED(self, **kwargs):
+        return float('nan')
+    
+class ImageChooser(BaseChooser):
     @classmethod
     def INPUT_TYPES(s):
-        return {"required": {
-            "images" : ("IMAGE", {}), 
-            "id" : ("INT", {"default":42, "min":0, "max": 100000000}),
-            }}
-
+        return {"required": { "images" : ("IMAGE", {}),  "id" : ("LABEL", {"value":"__random__"}), }}
     RETURN_TYPES = ("IMAGE",)
     RETURN_NAMES = ("image",)
-    CATEGORY = "utilities/control"
-    FUNCTION = "func"
 
     def func(self, images, id):
-        while not MessageHolder.haveMessage(id):
-            time.sleep(1)
-        i = (int(MessageHolder.popMessage(id))-1) % images.shape[0]
-        image = images[i].unsqueeze(0)
-        return (image,)
+        try:
+            MessageHolder.waitForMessage(id)
+            i = (int(MessageHolder.popMessage(id))-1) % images.shape[0]
+            image = images[i].unsqueeze(0)
+            return (image,)
+        except Cancelled:
+            return (None,)
     
-    def IS_CHANGED(self, **kwargs):
-        return float('nan')
-    
-class LatentChooser():
+class LatentChooser(BaseChooser):
     @classmethod
     def INPUT_TYPES(s):
-        return {"required": {
-            "latents" : ("LATENT", {}), 
-            "id" : ("INT", {"default":42, "min":0, "max": 100000000}),
-        }}
+        return {"required": { "latents" : ("LATENT", {}),  "id" : ("LABEL", {"value":"__random__"}), }}
     RETURN_TYPES = ("LATENT",)
     RETURN_NAMES = ("latent",)
-    CATEGORY = "utilities/control"
-    FUNCTION = "func"
 
     def func(self, latents, id):
-        while not MessageHolder.haveMessage(id):
-            time.sleep(1)
-
-        i = (int(MessageHolder.popMessage(id))-1) % latents['samples'].shape[0]
-        latent = {}
-        for key in latents:
-            latent[key] = latents[key][i].unsqueeze(0)
-        return (latent,)
-    
-    def IS_CHANGED(self, **kwargs):
-        return float('nan')
+        try:
+            MessageHolder.waitForMessage(id)
+            i = (int(MessageHolder.popMessage(id))-1) % latents['samples'].shape[0]
+            latent = {}
+            for key in latents:
+                latent[key] = latents[key][i].unsqueeze(0)
+            return (latent,)
+        except Cancelled:
+            return (None,)
 
 def ints_from_comma_string(string):
     for entry in string.split(","):
@@ -90,21 +92,25 @@ def ints_from_comma_string(string):
             pass
 
 @ui_signal('display_text')
-class MultiLatentChooser():
+class MultiLatentChooser(BaseChooser):
     @classmethod
     def INPUT_TYPES(s):
-        return {"required": {
-            "latents" : ("LATENT", {}), 
-            "id" : ("INT", {"default":42, "min":0, "max": 100000000}),
-            "positive" : ("STRING", {"default":""}),
-            "negative" : ("STRING", {"default":""}),
-            "mode" : (["Discard Previous", "Accumulate"],),
-        }, "optional": {"trigger": ("*",{})}}
+        return {
+            "required": {
+                "latents" : ("LATENT", {}), 
+                "id" : ("LABEL", {"value":"__random__"}), 
+                "positive" : ("STRING", {"default":""}),
+                "negative" : ("STRING", {"default":""}),
+                "mode" : (["Discard Previous", "Accumulate"],),
+            }, 
+            "optional": {
+                "trigger": ("*",{})
+            }
+        }
     
     RETURN_TYPES = ("LATENT","LATENT",)
     RETURN_NAMES = ("positives","negatives",)
     CATEGORY = "utilities/control/_testing"
-    FUNCTION = "func"
 
     def __init__(self):
         self.positive:torch.Tensor = None
@@ -126,18 +132,18 @@ class MultiLatentChooser():
         return torch.cat((latent1.clone(), latent2.clone()), dim=0)
 
     def func(self, latents, id, **kwargs):
+        MessageHolder.waitForMessage(id)
+
         batch_size = int(latents['samples'].shape[0])
         latent_shape = latents['samples'].shape[1:]
-        while not MessageHolder.haveMessage(id):
-            time.sleep(1)
-
+        
         try:
             msg = MessageHolder.popMessage(id)
             message = json.loads(msg)
             if not isinstance(message,dict):
                 raise Exception(message)
-        except:
-            return (None, None, f"Got {message}")
+        except Cancelled:
+            return (None, None, "Cancelled")
         
         if message['mode']=="Discard Previous":
             self.positive = None

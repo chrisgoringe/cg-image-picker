@@ -19,8 +19,10 @@ shutil.copytree(module_js_directory, application_web_extensions_directory, dirs_
 
 try:
     from custom_nodes.cg_custom_core import CC_VERSION
+    if CC_VERSION < 2.2:
+        raise Exception()
 except:
-    print("cg_custom_core not found - will try to install - you may need to restart afterwards")
+    print("cg_custom_core 2.2 not found - will try to install - you may need to restart afterwards")
     from .install import installer
     import os
     import folder_paths
