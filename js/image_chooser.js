@@ -43,7 +43,6 @@ app.registerExtension({
                 return cloned;
             }
             node.widgets[0].value = Math.floor(Math.random() * 10000000);
-            //node.widgets[0].inputEl.readOnly = true;
             const go_widget = node.addWidget("button", "go", "", (w) => {
                 if (app.runningNodeId===node.id.toString()) {
                     const body = new FormData();
