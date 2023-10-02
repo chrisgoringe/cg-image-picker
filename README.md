@@ -44,7 +44,7 @@ The exception is the chooser nodes themselves. They communicate directly with th
 
 ## Trigger?
 
-The trigger input is optional, can take any input, and is ignored. You use it to ensure that an upstream node runs before this one. So if you are choosin
+The trigger input is optional, can take any input, and is ignored. You use it to ensure that an upstream node runs before this one. Mostly useful for choosing between latents (see below).
 
 ## Send a second choice?
 
