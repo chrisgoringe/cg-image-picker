@@ -15,6 +15,8 @@ NODE_CLASS_MAPPINGS = {
 
 __all__ = ['NODE_CLASS_MAPPINGS']
 
+IP_VERSION = 2.0
+
 shutil.copytree(module_js_directory, application_web_extensions_directory, dirs_exist_ok=True)
 
 try:
