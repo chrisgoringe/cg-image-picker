@@ -53,11 +53,14 @@ class BaseChooser():
 class ImageChooser(BaseChooser):
     @classmethod
     def INPUT_TYPES(s):
-        return {"required": { "images" : ("IMAGE", {}),  "id" : ("LABEL", {"value":"__random__"}), }}
+        return {
+            "required": { "images" : ("IMAGE", {}),  "id" : ("LABEL", {"value":"__random__"}), }, 
+            "optional": { "trigger": ("*",{}) }
+        }
     RETURN_TYPES = ("IMAGE",)
     RETURN_NAMES = ("image",)
 
-    def func(self, images, id):
+    def func(self, images, id, **kwargs):
         try:
             MessageHolder.waitForMessage(id)
             i = (int(MessageHolder.popMessage(id))-1) % images.shape[0]
@@ -69,11 +72,14 @@ class ImageChooser(BaseChooser):
 class LatentChooser(BaseChooser):
     @classmethod
     def INPUT_TYPES(s):
-        return {"required": { "latents" : ("LATENT", {}),  "id" : ("LABEL", {"value":"__random__"}), }}
+        return {
+            "required": { "latents" : ("LATENT", {}),  "id" : ("LABEL", {"value":"__random__"}), }, 
+            "optional": { "trigger": ("*",{}) }
+        }
     RETURN_TYPES = ("LATENT",)
     RETURN_NAMES = ("latent",)
 
-    def func(self, latents, id):
+    def func(self, latents, id, **kwargs):
         try:
             MessageHolder.waitForMessage(id)
             i = (int(MessageHolder.popMessage(id))-1) % latents['samples'].shape[0]
@@ -103,9 +109,7 @@ class MultiLatentChooser(BaseChooser):
                 "negative" : ("STRING", {"default":""}),
                 "mode" : (["Discard Previous", "Accumulate"],),
             }, 
-            "optional": {
-                "trigger": ("*",{})
-            }
+            "optional": { "trigger": ("*",{}) }
         }
     
     RETURN_TYPES = ("LATENT","LATENT",)
