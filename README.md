@@ -62,7 +62,9 @@ If you want the rest of your workflow to start with the latent instead, use the 
 
 ![workflow](docs/Screenshot%20latent.png)
 
-Here's another dog with the workflow... ![dog](docs/latent%20choice.png)
+Here's another dog with the workflow... 
+
+![dog](docs/latent%20choice.png)
 
 ## Multiple outputs
 
