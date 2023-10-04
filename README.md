@@ -52,9 +52,11 @@ A few people have asked if it is possible to send one output, and then another. 
 
 The way I suggest you work is have everything upstream with fixed seeds, so when you run the workflow again none of it gets repeated, then you can make a different choice.
 
-I'm going to look into allowing more than one selection to be passed through, [as suggested here](https://github.com/chrisgoringe/cg-image-picker/issues/1) but no promises.
+The exception is the multiple latent chooser (WIP) - see below.
 
-(update - see below)
+## Heads up display
+
+When the workflow pauses on a selection node, a basic HUD appears. At the moment it just has a cancel button, but more is coming.
 
 ## Latent Chooser
 
