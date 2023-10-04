@@ -15,9 +15,9 @@ NODE_CLASS_MAPPINGS = {
 
 __all__ = ['NODE_CLASS_MAPPINGS']
 
-IP_VERSION = 2.1
+IP_VERSION = 2.2
 
-shutil.copytree(module_js_directory, application_web_extensions_directory, dirs_exist_ok=True)
+shutil.copytree(module_js_directory, os.path.join(application_web_extensions_directory,"..","cg_image_picker"), dirs_exist_ok=True)
 
 try:
     from custom_nodes.cg_custom_core import CC_VERSION
