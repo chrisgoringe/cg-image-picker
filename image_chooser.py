@@ -30,11 +30,12 @@ class MessageHolder:
 
     @classmethod
     def haveMessage(cls, id):
-        return str(id) in cls.messages
+        return str(id) in cls.messages or str(-1) in cls.messages
     
     @classmethod
     def popMessage(cls, id):
         r = cls.messages.pop(str(id),None)
+        r = r or cls.messages.pop(str(-1), None)
         if r == "__cancel__":
             raise Cancelled()
         return r
