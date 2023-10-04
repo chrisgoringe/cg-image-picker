@@ -22,6 +22,22 @@ cd [path to ComfyUI]/custom_nodes/cg-image-picker
 git pull
 ```
 
+# Latest update (2.2, 4th October 2023)
+
+Two new features as well as a bunch of bug-fixes. You can see them both in this screenshot...
+
+![hud](docs/hud%20and%20progress.png)
+
+That floating 'Cancel' button on the left? When the workflow pauses in a selection node, you get a visual indication, and you can cancel the run without having to find the node (feature inspired by [Erehr](https://github.com/chrisgoringe/cg-image-picker/issues/8)). 
+
+And then in the `Preview for image chooser` node, there is now a right-click menu option to select this image to proceed with. So you don't have to work out what number it is - pick the best image, right click, and `Progress this image`. 
+
+I'll be adding more options to both those features soon (`cancel and requeue`, for instance, for when you don't like any of the images).
+
+Neither the HUD nor the right-click option should appear when the workflow isn't paused on a chooser node. But note that there are no smarts about which chooser node you are paused on, so if your workflow has multiple choosers, you'll need to work out the best way to use this.
+
+# The Image and Latent Chooser nodes
+
 ## To use - Image Chooser
 
 Here's a really simple example. The `Preview for Image Chooser` node is just a `Preview Image` node with an added output that passes the images on - that's just for convenience. When you run the prompt, it will pause on the `Image Chooser` until you press 'go', at which point it will pass the selected image on.
@@ -53,10 +69,6 @@ A few people have asked if it is possible to send one output, and then another. 
 The way I suggest you work is have everything upstream with fixed seeds, so when you run the workflow again none of it gets repeated, then you can make a different choice.
 
 The exception is the multiple latent chooser (WIP) - see below.
-
-## Heads up display
-
-When the workflow pauses on a selection node, a basic HUD appears. At the moment it just has a cancel button, but more is coming.
 
 ## Latent Chooser
 
