@@ -1,6 +1,5 @@
 import { $el } from "../../../scripts/ui.js";
-import { api } from "../../../scripts/api.js";
-import { send_message_from_pausing_node } from "./image_chooser_messaging.js";
+import { send_cancel } from "./image_chooser_messaging.js";
 
 var class_of_current_node;
 function node_is_chooser(node) {
@@ -22,10 +21,7 @@ const hovering_cancel = $el("div", {
         $el("span", { style: {}, textContent: "" }),
         $el("button", {
             textContent: "Cancel",
-            onclick: () => {
-                api.interrupt();
-                send_message_from_pausing_node('__cancel__');
-            },
+            onclick: () => {send_cancel();},
             style: {  }
         })
     ]

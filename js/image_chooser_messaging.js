@@ -12,6 +12,11 @@ function send_message(id, message) {
     api.fetchApi("/image_chooser_message", { method: "POST", body, });
 }
 
+function send_cancel() {
+    send_message(-1,'__cancel__');
+    api.interrupt();
+}
+
 function message_button(node, label, make_value) {
     return node.addWidget("button", label, "", () => {
         if (app.runningNodeId===node.id.toString()) {
@@ -21,11 +26,11 @@ function message_button(node, label, make_value) {
 }
 
 function cancel_button(node) {
-    return message_button(node, "cancel", (node) => {
-        document.getElementById("autoQueueCheckbox").checked = false;
-        api.interrupt();
-        return '__cancel__';
-    })
+    return node.addWidget("button", label, "", () => {
+        if (app.runningNodeId===node.id.toString()) {
+            send_cancel();
+        };
+    });
 }
 
-export { send_message, send_message_from_pausing_node, message_button, cancel_button }
+export { send_message_from_pausing_node, message_button, cancel_button, send_cancel }

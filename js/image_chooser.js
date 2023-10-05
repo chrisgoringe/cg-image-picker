@@ -1,8 +1,7 @@
 import { app } from "../../../scripts/app.js";
-import { api } from "../../../scripts/api.js";
 
 import { hovering_cancel, node_is_chooser, flow_is_paused } from "./image_chooser_hud.js";
-import { message_button, cancel_button, send_message_from_pausing_node, send_message } from "./image_chooser_messaging.js";
+import { message_button, cancel_button, send_message_from_pausing_node, send_cancel } from "./image_chooser_messaging.js";
 
 app.registerExtension({
 	name: "cg.custom.image_chooser",
@@ -20,10 +19,7 @@ app.registerExtension({
                 options.push(null); // divider
                 options.push({
                     content: `Cancel current run`,
-                    callback: () => {
-                        send_message(-1,'__cancel__');
-                        api.interrupt();
-                    }
+                    callback: () => { send_cancel(); }
                 });
             }
             return options;
@@ -69,12 +65,16 @@ app.registerExtension({
                 getExtraMenuOptions?.apply(this,arguments);
                 if (flow_is_paused()) {
                     const imageIndex = (this.imageIndex != null) ? this.imageIndex : this.overIndex;
-                    const saveIndex = options.findIndex((o)=>{return (o && o.content==="Save Image")});
-                    options.splice(saveIndex,0,
+                    options.unshift(
                         {
                             content: "Progress this image",
                             callback: () => { send_message_from_pausing_node(imageIndex+1); }
-                        }
+                        },
+                        {
+                            content: "Cancel this run",
+                            callback: () => { send_cancel(); }
+                        },
+                        null,
                     );
                 }
             }
