@@ -16,7 +16,7 @@ app.registerExtension({
         if (node?.comfyClass === "Image Chooser" || node?.comfyClass === "Latent Chooser" ) {
             const pk_widget = node.addWidget("combo", "choice", 1, () => {}, { values: [1,2,3,4,5,6,7,8] });
             const go_widget = message_button(node, "go", (node)=>{ 
-                return node.widgets[1].value 
+                return pk_widget.value 
             });
             const cancel_widget = cancel_button(node);
             go_widget.serialize = false;
