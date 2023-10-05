@@ -100,7 +100,7 @@ class LatentChooser(BaseChooser):
     def func(self, latents, id, mode, **kwargs):
         try:
             if (mode=="Always pause" or latents['samples'].shape[0]>1):
-                i = (int(MessageHolder.waitForMessage(id))-1) % images.shape[0]
+                i = (int(MessageHolder.waitForMessage(id))-1) % latents['samples'].shape[0]
             else:
                 i=0
             latent = {}
