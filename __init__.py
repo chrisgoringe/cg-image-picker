@@ -15,7 +15,7 @@ NODE_CLASS_MAPPINGS = {
 
 __all__ = ['NODE_CLASS_MAPPINGS']
 
-IP_VERSION = 2.2
+IP_VERSION = 2.3
 
 shutil.copytree(module_js_directory, os.path.join(application_web_extensions_directory,"..","cg_image_picker"), dirs_exist_ok=True)
 
