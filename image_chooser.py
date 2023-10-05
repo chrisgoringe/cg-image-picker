@@ -55,16 +55,23 @@ class ImageChooser(BaseChooser):
     @classmethod
     def INPUT_TYPES(s):
         return {
-            "required": { "images" : ("IMAGE", {}),  "id" : ("LABEL", {"value":"__random__"}), }, 
+            "required": { 
+                "images" : ("IMAGE", {}),  
+                "id" : ("LABEL", {"value":"__random__"}), 
+                "mode" : (["Always pause", "Only pause if batch"],{}),
+                }, 
             "optional": { "trigger": ("*",{}) }
         }
     RETURN_TYPES = ("IMAGE",)
     RETURN_NAMES = ("image",)
 
-    def func(self, images, id, **kwargs):
+    def func(self, images, id, mode, **kwargs):
         try:
-            MessageHolder.waitForMessage(id)
-            i = (int(MessageHolder.popMessage(id))-1) % images.shape[0]
+            if (mode=="Always pause" or images.shape[0]>1):
+                MessageHolder.waitForMessage(id)
+                i = (int(MessageHolder.popMessage(id))-1) % images.shape[0]
+            else:
+                i = 0
             image = images[i].unsqueeze(0)
             return (image,)
         except Cancelled:
@@ -74,16 +81,23 @@ class LatentChooser(BaseChooser):
     @classmethod
     def INPUT_TYPES(s):
         return {
-            "required": { "latents" : ("LATENT", {}),  "id" : ("LABEL", {"value":"__random__"}), }, 
+            "required": { 
+                "latents" : ("LATENT", {}),  
+                "id" : ("LABEL", {"value":"__random__"}), 
+                "mode" : (["Always pause", "Only pause if batch"],{}),
+            },
             "optional": { "trigger": ("*",{}) }
         }
     RETURN_TYPES = ("LATENT",)
     RETURN_NAMES = ("latent",)
 
-    def func(self, latents, id, **kwargs):
+    def func(self, latents, id, mode, **kwargs):
         try:
-            MessageHolder.waitForMessage(id)
-            i = (int(MessageHolder.popMessage(id))-1) % latents['samples'].shape[0]
+            if (mode=="Always pause" or latents['samples'].shape[0]>1):
+                MessageHolder.waitForMessage(id)
+                i = (int(MessageHolder.popMessage(id))-1) % latents['samples'].shape[0]
+            else:
+                i=0
             latent = {}
             for key in latents:
                 latent[key] = latents[key][i].unsqueeze(0)
