@@ -22,7 +22,13 @@ cd [path to ComfyUI]/custom_nodes/cg-image-picker
 git pull
 ```
 
-# Latest update (2.2, 4th October 2023)
+# Update 2.3 (5th October 2023)
+
+- Added option to only pause for batches (let single images/latents through immediately)
+- Added cancel option to preview right-click
+- Fixed some bugs
+
+# Major update (2.2, 4th October 2023)
 
 Two new features as well as a bunch of bug-fixes. You can see them both in this screenshot...
 
