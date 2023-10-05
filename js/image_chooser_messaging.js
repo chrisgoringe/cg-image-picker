@@ -26,7 +26,7 @@ function message_button(node, label, make_value) {
 }
 
 function cancel_button(node) {
-    return node.addWidget("button", label, "", () => {
+    return node.addWidget("button", "cancel", "", () => {
         if (app.runningNodeId===node.id.toString()) {
             send_cancel();
         };
