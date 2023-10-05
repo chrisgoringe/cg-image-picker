@@ -16,7 +16,7 @@ const hovering_cancel = $el("div", {
         "border":"thin solid #f66", 
         "visibility":"hidden", 
         "padding":"8px", 
-        "opacity":0.5,
+        "opacity":0.8,
     }},
     [
         $el("span", { style: {}, textContent: "" }),
