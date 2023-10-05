@@ -24,26 +24,33 @@ class PreviewImageChooser(PreviewImage):
     
 class MessageHolder:
     messages = {}
-    @classmethod
-    def addMessage(cls, id, message):
-        cls.messages[str(id)] = message
+    lastCancel = time.monotonic()
 
     @classmethod
-    def haveMessage(cls, id):
-        return str(id) in cls.messages or str(-1) in cls.messages
+    def _addCancel(cls):
+        cls.lastCancel = time.monotonic()
+
+    @classmethod
+    def _recentCancel(cls, period=1.0):
+        return ((time.monotonic()-cls.lastCancel)<period)
     
     @classmethod
-    def popMessage(cls, id):
-        r = cls.messages.pop(str(id),None)
-        r = r or cls.messages.pop(str(-1), None)
-        if r == "__cancel__":
-            raise Cancelled()
-        return r
+    def addMessage(cls, id, message):
+        if message=='__cancel__':
+            cls._addCancel()
+        else:
+            cls.messages[str(id)] = message
     
     @classmethod
     def waitForMessage(cls, id, period = 0.1):
-        while not cls.haveMessage(id):
+        sid = str(id)
+        while not (sid in cls.messages):
+            if cls._recentCancel():
+                raise Cancelled()
             time.sleep(period)
+        if cls._recentCancel():
+            raise Cancelled()
+        return cls.messages.pop(str(id),None)
 
 class BaseChooser():
     CATEGORY = "utilities/control"
@@ -55,16 +62,22 @@ class ImageChooser(BaseChooser):
     @classmethod
     def INPUT_TYPES(s):
         return {
-            "required": { "images" : ("IMAGE", {}),  "id" : ("LABEL", {"value":"__random__"}), }, 
+            "required": { 
+                "images" : ("IMAGE", {}),  
+                "id" : ("LABEL", {"value":"__random__"}), 
+                "mode" : (["Always pause", "Only pause if batch"],{}),
+                }, 
             "optional": { "trigger": ("*",{}) }
         }
     RETURN_TYPES = ("IMAGE",)
     RETURN_NAMES = ("image",)
 
-    def func(self, images, id, **kwargs):
+    def func(self, images, id, mode, **kwargs):
         try:
-            MessageHolder.waitForMessage(id)
-            i = (int(MessageHolder.popMessage(id))-1) % images.shape[0]
+            if (mode=="Always pause" or images.shape[0]>1):
+                i = (int(MessageHolder.waitForMessage(id))-1) % images.shape[0]
+            else:
+                i = 0
             image = images[i].unsqueeze(0)
             return (image,)
         except Cancelled:
@@ -74,16 +87,23 @@ class LatentChooser(BaseChooser):
     @classmethod
     def INPUT_TYPES(s):
         return {
-            "required": { "latents" : ("LATENT", {}),  "id" : ("LABEL", {"value":"__random__"}), }, 
+            "required": { 
+                "latents" : ("LATENT", {}),  
+                "id" : ("LABEL", {"value":"__random__"}), 
+                "mode" : (["Always pause", "Only pause if batch"],{}),
+            },
             "optional": { "trigger": ("*",{}) }
         }
     RETURN_TYPES = ("LATENT",)
     RETURN_NAMES = ("latent",)
 
-    def func(self, latents, id, **kwargs):
+    def func(self, latents, id, mode, **kwargs):
         try:
-            MessageHolder.waitForMessage(id)
-            i = (int(MessageHolder.popMessage(id))-1) % latents['samples'].shape[0]
+            if (mode=="Always pause" or latents['samples'].shape[0]>1):
+                MessageHolder.waitForMessage(id)
+                i = (int(MessageHolder.popMessage(id))-1) % latents['samples'].shape[0]
+            else:
+                i=0
             latent = {}
             for key in latents:
                 latent[key] = latents[key][i].unsqueeze(0)
