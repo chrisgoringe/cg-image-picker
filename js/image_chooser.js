@@ -1,7 +1,9 @@
 import { app } from "../../../scripts/app.js";
+import { restart_from_here } from "./image_chooser_prompt.js";
 
 import { hovering_cancel, node_is_chooser, flow_is_paused } from "./image_chooser_hud.js";
 import { message_button, cancel_button, send_message_from_pausing_node, send_cancel } from "./image_chooser_messaging.js";
+import { Logger } from "./logger.js";
 
 app.registerExtension({
 	name: "cg.custom.image_chooser",
@@ -76,6 +78,26 @@ app.registerExtension({
                         },
                         null,
                     );
+                }
+            }
+        }
+
+        if (nodeType?.comfyClass === "Image Chooser") {
+            const getExtraMenuOptions = nodeType.prototype.getExtraMenuOptions;
+            nodeType.prototype.getExtraMenuOptions = function(_, options) {
+            getExtraMenuOptions?.apply(this,arguments);
+                if (!app.runningNodeId) {  // && this.hasBeenExecuted
+                    options.push(
+                        null,
+                        {
+                            content: "Restart from here",
+                            callback: async () => {
+                                Logger.trace("Restart from here", arguments, this);
+                                restart_from_here(this.id);
+                            }
+                        },
+                        null,
+                    )
                 }
             }
         }
