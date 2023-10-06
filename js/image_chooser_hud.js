@@ -35,8 +35,20 @@ hovering_cancel.setVisible = (visible) => {
 };
 document.body.append(hovering_cancel);
 
-function flow_is_paused() {
-    return hovering_cancel.isVisible;
+class FlowState {
+    constructor(){}
+    static idle() {
+        return (!app.runningNodeId);
+    }
+    static paused() {
+        return hovering_cancel.isVisible;
+    }
+    static running() {
+        return (app.runningNodeId>=0);
+    }
+    static here(node_id) {
+        return (app.runningNodeId==node_id);
+    }
 }
 
-export { hovering_cancel, node_is_chooser, flow_is_paused }
+export { hovering_cancel, node_is_chooser, FlowState }

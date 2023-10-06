@@ -33,4 +33,4 @@ function cancel_button(node) {
     });
 }
 
-export { send_message_from_pausing_node, message_button, cancel_button, send_cancel }
+export { send_message_from_pausing_node, message_button, cancel_button, send_cancel, send_message }

@@ -18,10 +18,6 @@ __all__ = ['NODE_CLASS_MAPPINGS']
 IP_VERSION = 2.4
 CLEAN = False
 
-application_root_directory = os.path.dirname(folder_paths.__file__)
-extension_web_extensions_directory = os.path.join(application_root_directory, "web", "extensions", "image_chooser")
-shutil.copytree(module_js_directory, extension_web_extensions_directory, dirs_exist_ok=True)
-
 try:
     from custom_nodes.cg_custom_core import CC_VERSION
     if CC_VERSION < 2.2:
@@ -35,3 +31,8 @@ except:
     import folder_paths
     application_root_directory = os.path.dirname(folder_paths.__file__)
     installer(os.path.join(application_root_directory,"custom_nodes"))
+
+    
+application_root_directory = os.path.dirname(folder_paths.__file__)
+extension_web_extensions_directory = os.path.join(application_root_directory, "web", "extensions", "image_chooser")
+shutil.copytree(module_js_directory, extension_web_extensions_directory, dirs_exist_ok=True)

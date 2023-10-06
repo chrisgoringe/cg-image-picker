@@ -9,18 +9,27 @@ class Cancelled(Exception):
     pass
 
 class PreviewImageChooser(PreviewImage):
-    RETURN_TYPES = ("IMAGE",)
-    RETURN_NAMES = ("images",)
+    RETURN_TYPES = ("IMAGE","LATENT",)
+    RETURN_NAMES = ("images","latent",)
     FUNCTION = "func"
     CATEGORY = "utilities/control"
+
+    @classmethod
+    def INPUT_TYPES(s):
+        return {
+            "required": {"images": ("IMAGE", ), },
+            "optional": {"latents": ("LATENT", ), },
+            "hidden": {"prompt": "PROMPT", "extra_pnginfo": "EXTRA_PNGINFO"},
+        }
 
     def __init__(self):
         super().__init__()
 
     def func(self, **kwargs):
+        latents = kwargs.pop("latents",None)
         ret = self.save_images(**kwargs)
-        ret['result'] = (kwargs['images'],)
-        return ret  
+        ret['result'] = (kwargs['images'],latents,)
+        return ret
     
 class MessageHolder:
     messages = {}
@@ -39,18 +48,22 @@ class MessageHolder:
         if message=='__cancel__':
             cls._addCancel()
         else:
-            cls.messages[str(id)] = message
+            try:
+                cls.messages[str(id)] = int(message.strip())
+            except ValueError:
+                print(f"{message} not an integer - default to zero")
+                cls.messages[str(id)] = 0
     
     @classmethod
     def waitForMessage(cls, id, period = 0.1):
         sid = str(id)
-        while not (sid in cls.messages):
+        while not (sid in cls.messages) and not ("-1" in cls.messages):
             if cls._recentCancel():
                 raise Cancelled()
             time.sleep(period)
         if cls._recentCancel():
             raise Cancelled()
-        return cls.messages.pop(str(id),None)
+        return cls.messages.pop(str(id),None) or cls.messages.pop("-1")
 
 class BaseChooser():
     CATEGORY = "utilities/control"
@@ -63,19 +76,29 @@ class ImageChooser(BaseChooser):
     def INPUT_TYPES(s):
         return {
             "required": { 
-                "images" : ("IMAGE", {}),  
-                "id" : ("LABEL", {"value":"__random__"}), 
+                "id" : ("LABEL", {"value":"__random__", "hidden":True}), 
+                "choice" : ("STRING", {"default": "1"}),
                 "mode" : (["Always pause", "Only pause if batch"],{}),
                 }, 
-            "optional": { "trigger": ("*",{}) }
+            "optional": { "images" : ("IMAGE", {}) }
         }
     RETURN_TYPES = ("IMAGE",)
     RETURN_NAMES = ("image",)
 
-    def func(self, images, id, mode, **kwargs):
+    def __init__(self):
+        self.stashed = None
+
+    def func(self, id, mode, images=None, **kwargs):
+        if images is not None:
+            self.stashed = images
+        else:
+            images = self.stashed
+
         try:
             if (mode=="Always pause" or images.shape[0]>1):
-                i = (int(MessageHolder.waitForMessage(id))-1) % images.shape[0]
+                message = MessageHolder.waitForMessage(id)
+#                message = message if message!=-1 else int(choice)
+                i = (message-1) % images.shape[0]
             else:
                 i = 0
             image = images[i].unsqueeze(0)
@@ -87,20 +110,29 @@ class LatentChooser(BaseChooser):
     @classmethod
     def INPUT_TYPES(s):
         return {
-            "required": { 
-                "latents" : ("LATENT", {}),  
-                "id" : ("LABEL", {"value":"__random__"}), 
+            "required": {     
+                "id" : ("LABEL", {"value":"__random__", "hidden":True}), 
+                "choice" : ("STRING", {"default": "1"}),
                 "mode" : (["Always pause", "Only pause if batch"],{}),
             },
-            "optional": { "trigger": ("*",{}) }
+            "optional": { "images": ("*",{}), "latents" : ("LATENT", {}), }
         }
     RETURN_TYPES = ("LATENT",)
     RETURN_NAMES = ("latent",)
 
-    def func(self, latents, id, mode, **kwargs):
+    def __init__(self):
+        self.stashed = None
+
+    def func(self, id, mode, latents=None, **kwargs):
+        if latents is not None:
+            self.stashed = latents
+        else:
+            latents = self.stashed
         try:
             if (mode=="Always pause" or latents['samples'].shape[0]>1):
-                i = (int(MessageHolder.waitForMessage(id))-1) % latents['samples'].shape[0]
+                message = MessageHolder.waitForMessage(id)
+#                message = message if message!=-1 else int(choice)
+                i = (message-1) % latents['samples'].shape[0]
             else:
                 i=0
             latent = {}
