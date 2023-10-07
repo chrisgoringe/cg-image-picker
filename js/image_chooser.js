@@ -1,7 +1,7 @@
 import { app } from "../../../scripts/app.js";
 import { restart_from_here } from "./image_chooser_prompt.js";
 
-import { hovering_cancel, node_is_chooser, FlowState } from "./image_chooser_hud.js";
+import { hud, FlowState } from "./image_chooser_hud.js";
 import { message_button, cancel_button, send_message_from_pausing_node, send_cancel, send_message } from "./image_chooser_messaging.js";
 import { Logger } from "./logger.js";
 
@@ -10,7 +10,7 @@ app.registerExtension({
     setup() {
         const draw = LGraphCanvas.prototype.draw;
         LGraphCanvas.prototype.draw = function() {
-            hovering_cancel.setVisible(app.runningNodeId && node_is_chooser(app.graph._nodes_by_id[app.runningNodeId.toString()]));
+            hud.update();
             draw.apply(this,arguments);
         }
 
