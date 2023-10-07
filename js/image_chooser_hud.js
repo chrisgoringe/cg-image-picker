@@ -24,7 +24,7 @@ class HUD {
                 this.span, this.the_cancel_button
             ]
         )
-        document.body.append(hud);
+        document.body.append(this.hud);
         this.current_node_id = undefined;
         this.class_of_current_node = null;
         this.current_node_is_chooser = false;
