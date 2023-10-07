@@ -1,5 +1,5 @@
 import { $el } from "../../../scripts/ui.js";
-import { cancel_button, send_cancel } from "./image_chooser_messaging.js";
+import { send_cancel } from "./image_chooser_messaging.js";
 
 class HUD {
 
@@ -21,7 +21,7 @@ class HUD {
                 "opacity":0.8,
             }},
             [
-                span, the_cancel_button
+                this.span, this.the_cancel_button
             ]
         )
         document.body.append(hud);
