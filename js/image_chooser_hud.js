@@ -36,8 +36,7 @@ class HUD {
         this.current_node_id = app.runningNodeId;
         
         if (this.current_node_id) {
-            node = app.graph._nodes_by_id[app.runningNodeId.toString()]
-            this.class_of_current_node = node?.comfyClass;
+            this.class_of_current_node = app.graph?._nodes_by_id[app.runningNodeId.toString()]?.comfyClass;
             this.current_node_is_chooser = (this.class_of_current_node === "Image Chooser" || 
                                             this.class_of_current_node === "Latent Chooser" || 
                                             this.class_of_current_node === "Multi Latent Chooser");
