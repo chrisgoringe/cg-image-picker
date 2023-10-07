@@ -16,7 +16,6 @@ class HUD {
                 "top":"100px", 
                 "left":"100px", 
                 "border":"thin solid #f66", 
-                //"visibility":"hidden", 
                 "padding":"8px", 
                 "opacity":0.8,
             }},
@@ -24,6 +23,9 @@ class HUD {
                 this.span, this.the_cancel_button
             ]
         )
+        this.span.textContent = "Idle";
+        this.the_cancel_button.style.display = "none";
+
         document.body.append(this.hud);
         this.current_node_id = undefined;
         this.class_of_current_node = null;
@@ -41,12 +43,12 @@ class HUD {
                                             this.class_of_current_node === "Latent Chooser" || 
                                             this.class_of_current_node === "Multi Latent Chooser");
             this.span.textContent = `${FlowState.state()} in ${this.class_of_current_node} (${this.current_node_id}) `;
-            this.the_cancel_button.style.visibility = "visible";
+            this.the_cancel_button.style.display = "inline";
         } else {
             this.class_of_current_node = undefined;
             this.current_node_is_chooser = false;
             this.span.textContent = "Idle";
-            this.the_cancel_button.style.visibility = "hidden";
+            this.the_cancel_button.style.display = "none";
         }
     }
 }
