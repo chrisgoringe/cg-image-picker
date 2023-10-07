@@ -52,7 +52,7 @@ class HUD {
     }
 }
 
-const hud = HUD();
+const hud = new HUD();
 
 class FlowState {
     constructor(){}
