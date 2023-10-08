@@ -9,18 +9,27 @@ class Cancelled(Exception):
     pass
 
 class PreviewImageChooser(PreviewImage):
-    RETURN_TYPES = ("IMAGE",)
-    RETURN_NAMES = ("images",)
+    RETURN_TYPES = ("IMAGE","LATENT",)
+    RETURN_NAMES = ("images","latent",)
     FUNCTION = "func"
     CATEGORY = "utilities/control"
+
+    @classmethod
+    def INPUT_TYPES(s):
+        return {
+            "required": {"images": ("IMAGE", ), },
+            "optional": {"latents": ("LATENT", ), },
+            "hidden": {"prompt": "PROMPT", "extra_pnginfo": "EXTRA_PNGINFO"},
+        }
 
     def __init__(self):
         super().__init__()
 
     def func(self, **kwargs):
+        latents = kwargs.pop("latents",None)
         ret = self.save_images(**kwargs)
-        ret['result'] = (kwargs['images'],)
-        return ret  
+        ret['result'] = (kwargs['images'],latents,)
+        return ret
     
 class MessageHolder:
     messages = {}
