@@ -165,13 +165,11 @@ class MultiLatentChooser(BaseChooser):
         return torch.cat((latent1.clone(), latent2.clone()), dim=0)
 
     def func(self, latents, id, **kwargs):
-        MessageHolder.waitForMessage(id)
-
         batch_size = int(latents['samples'].shape[0])
         latent_shape = latents['samples'].shape[1:]
         
         try:
-            msg = MessageHolder.popMessage(id)
+            msg = MessageHolder.waitForMessage(id)
             message = json.loads(msg)
             if not isinstance(message,dict):
                 raise Exception(message)
