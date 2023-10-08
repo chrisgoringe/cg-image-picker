@@ -13,8 +13,8 @@ class HUD {
         this.hud = $el("div", {
             style: { 
                 "position": "fixed", 
-                "top":"100px", 
-                "left":"100px", 
+                "top":"10px", 
+                "left":"10px", 
                 "border":"thin solid #f66", 
                 "padding":"8px", 
                 "opacity":0.8,
