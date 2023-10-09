@@ -32,6 +32,8 @@ except:
     
 application_root_directory = os.path.dirname(folder_paths.__file__)
 extension_web_extensions_directory = os.path.join(application_root_directory, "web", "extensions", "image_chooser")
+if os.path.exists(extension_web_extensions_directory):
+    shutil.rmtree(extension_web_extensions_directory)
 shutil.copytree(module_js_directory, extension_web_extensions_directory, dirs_exist_ok=True)
 
 old_web_extensions_directory = os.path.join(application_root_directory, "web", "extensions", "cg-nodes", "cg_image_picker")

@@ -38,7 +38,8 @@ class PreviewAndChoose(PreviewImage):
             kwargs['latents'] = self.stashed['latents']
 
         # extract from inputs
-        latent_samples_in = kwargs.pop("latents")['samples'] if 'latents' in kwargs else None
+        latent_in         = kwargs.pop("latents", None)
+        latent_samples_in = latent_in['samples'] if latent_in and 'samples' in latent_in else None
         images_in         = kwargs['images']
         batch             = images_in.shape[0]
         id                = kwargs.pop("id")
