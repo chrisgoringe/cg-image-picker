@@ -17,12 +17,12 @@ CLEAN = False
 
 try:
     from custom_nodes.cg_custom_core import CC_VERSION
-    if CC_VERSION < 2.2:
+    if CC_VERSION < 2.3:
         raise Exception()
     if CLEAN:
         raise Exception()
 except:
-    print("cg_custom_core 2.2 not found - will try to install - you may need to restart afterwards")
+    print("cg_custom_core 2.3 not found - will try to install - you may need to restart afterwards")
     from .install import installer
     import os
     import folder_paths

@@ -27,7 +27,10 @@ function showImages(node, urls) {
 
 function additionalDrawBackground(node, ctx) {
     node?.selected?.forEach((s) => {
-        const rect = node?.imageRects[s];
+        var rect = [0, ]
+        if (node.imageRects) {
+            const rect = node.imageRects[s];
+        }
         const padding = 8;
         if (rect) {
             ctx.strokeStyle = "#8F8";

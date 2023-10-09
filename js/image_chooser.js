@@ -58,7 +58,7 @@ app.registerExtension({
                     (FlowState.idle()   && this?.imgs?.length>0)) {
                     if (imageIndex!=null) {
                         options.unshift(null);
-                        if (this.selected.has(imageIndex)) {
+                        if (this.selected.has(imageIndex) && this.imgs.length>1) {
                             options.unshift(
                                 {
                                     content: "Unselect",
@@ -66,7 +66,7 @@ app.registerExtension({
                                 },
                             )
                         }
-                        if (!this.selected.has(imageIndex)) {
+                        if (!this.selected.has(imageIndex) && this.imgs.length>1) {
                             options.unshift (
                                 {
                                     content: "Select",
@@ -74,11 +74,19 @@ app.registerExtension({
                                 }
                             )
                         }
-                        if ((this.selected.size > 0) && FlowState.paused_here(this.id)) {
+                        if ((this.selected.size > 0) && FlowState.paused_here(this.id) && this.imgs.length>1) {
                             options.unshift(
                                 {
                                     content: (this.selected.size>1) ? "Progress selected images" : "Progress selected image",
                                     callback: () => { send_message(this.widgets[0].value, [...this.selected]);  }
+                                },
+                            )
+                        }
+                        if (FlowState.paused_here(this.id) && this.imgs.length==1) {
+                            options.unshift(
+                                {
+                                    content: "Progress image" ,
+                                    callback: () => { send_message(this.widgets[0].value, [0]);  }
                                 },
                             )
                         }
@@ -87,6 +95,14 @@ app.registerExtension({
                                 {
                                     content: (this.selected.size>1) ? "Progress selected images (as restart)" : "Progress selected image (as restart)",
                                     callback: () => { restart_from_here(this.id).then(() => {send_message(this.widgets[0].value, [...this.selected])});  }
+                                },
+                            )
+                        }
+                        if (this.imgs.length==1 && FlowState.idle()) {
+                            options.unshift(
+                                {
+                                    content: "Progress image (as restart)",
+                                    callback: () => { restart_from_here(this.id).then(() => {send_message(this.widgets[0].value, [0])});  }
                                 },
                             )
                         }
