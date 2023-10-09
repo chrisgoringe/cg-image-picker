@@ -62,7 +62,7 @@ class PreviewAndChoose(PreviewImage):
         if len(images_out.shape)==3:
             images_out.unsqueeze_(0)
         if latent_samples_in is not None:
-            latent_samples_out = torch.cat(tuple([latent_samples_in[(x-1)%batch].unsqueeze_(0) for x in selections]))
+            latent_samples_out = torch.cat(tuple([latent_samples_in[(x)%batch].unsqueeze_(0) for x in selections]))
             if len(latent_samples_out.shape)==3:
                 latent_samples_out.unsqueeze_(0)
             latents_out = { "samples" : latent_samples_out }

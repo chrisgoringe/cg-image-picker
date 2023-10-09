@@ -7,7 +7,7 @@ function display_preview_images(event) {
         return false;
     });
     if (node) {
-        node.selected = [];
+        node.selected = new Set();
         showImages(node, event.detail.urls);
     } else {
         console.log(`Image Chooser Preview - failed to find ${event.detail.id}`)
@@ -25,6 +25,14 @@ function showImages(node, urls) {
     node.setSizeForImage?.();
 }
 
-function additionalDrawBackground(node) {}
+function additionalDrawBackground(node, ctx) {
+    this?.selected?.forEach((s) => {
+        const rect = this.imageRects[s];
+        const padding = 8;
+        ctx.strokeStyle = "#8F8";
+        ctx.lineWidth = 1;
+        ctx.strokeRect(rect[0]+padding, rect[1]+padding, rect[2]-padding*2, rect[3]-padding*2);
+    })
+}
 
 export { display_preview_images, additionalDrawBackground }

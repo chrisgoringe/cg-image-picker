@@ -3,7 +3,7 @@ import { api } from "../../../scripts/api.js";
 
 import { restart_from_here } from "./image_chooser_prompt.js";
 import { hud, FlowState } from "./image_chooser_hud.js";
-import { send_message_from_pausing_node, send_cancel, send_message } from "./image_chooser_messaging.js";
+import { send_cancel, send_message } from "./image_chooser_messaging.js";
 import { display_preview_images, additionalDrawBackground } from "./image_chooser_preview.js";
 
 app.registerExtension({
@@ -44,9 +44,9 @@ app.registerExtension({
     async beforeRegisterNodeDef(nodeType, nodeData, app) {
         if (nodeType?.comfyClass==="Preview Chooser") {
             const onDrawBackground = nodeType.prototype.onDrawBackground;
-            nodeType.prototype.onDrawBackground = function() {
+            nodeType.prototype.onDrawBackground = function(ctx) {
                 onDrawBackground.apply(this, arguments);
-                additionalDrawBackground(this);
+                additionalDrawBackground(this, ctx);
             }
 
             const getExtraMenuOptions = nodeType.prototype.getExtraMenuOptions;
@@ -54,15 +54,42 @@ app.registerExtension({
                 getExtraMenuOptions?.apply(this,arguments);
                 var imageIndex = (this.imageIndex != null) ? this.imageIndex : this.overIndex;
                 if (!imageIndex && this?.imgs?.length==1) imageIndex = 0;
-                if (FlowState.paused() && FlowState.here(this.id)) {
+                if ((FlowState.paused() && FlowState.here(this.id)) || 
+                    (FlowState.idle()   && this?.imgs?.length>0)) {
                     if (imageIndex!=null) {
-                        options.unshift(
-                            {
-                                content: "Progress this image",
-                                callback: () => { send_message_from_pausing_node(imageIndex+1);  }
-                            },
-                            null,
-                        )
+                        if (this.selected.has(imageIndex)) {
+                            options.unshift(
+                                {
+                                    content: "Unselect",
+                                    callback: () => { this.selected.delete(imageIndex); this.setDirtyCanvas(true,true); }
+                                },
+                            )
+                        }
+                        if (!this.selected.has(imageIndex)) {
+                            options.unshift (
+                                {
+                                    content: "Select",
+                                    callback: () => { this.selected.add(imageIndex); this.setDirtyCanvas(true,true);  }
+                                }
+                            )
+                        }
+                        if ((this.selected.size > 0) && FlowState.paused_here(this.id)) {
+                            options.unshift(
+                                {
+                                    content: (this.selected.size>1) ? "Progress selected images" : "Progress selected image",
+                                    callback: () => { send_message(this.id, [...this.selected]);  }
+                                },
+                            )
+                        }
+                        if ((this.selected.size > 0) && FlowState.idle()) {
+                            options.unshift(
+                                {
+                                    content: (this.selected.size>1) ? "Progress selected images (as restart)" : "Progress selected image (as restart)",
+                                    callback: () => { restart_from_here(this.id).then(() => {send_message(this.id, [...this.selected])});  }
+                                },
+                                null,
+                            )
+                        }
                     }
                     options.unshift(
                         {
@@ -71,15 +98,6 @@ app.registerExtension({
                         },
                         null,
                     );
-                }
-                if (FlowState.idle() && imageIndex!=null) { 
-                    options.unshift(
-                        {
-                            content: "Progress this image (as restart)",
-                            callback: () => { restart_from_here(this.id).then(() => {send_message(-1, imageIndex+1)});  }
-                        },
-                        null,
-                    )
                 }
             }
         }
