@@ -27,11 +27,13 @@ function showImages(node, urls) {
 
 function additionalDrawBackground(node, ctx) {
     node?.selected?.forEach((s) => {
-        const rect = this.imageRects[s];
+        const rect = node?.imageRects[s];
         const padding = 8;
-        ctx.strokeStyle = "#8F8";
-        ctx.lineWidth = 1;
-        ctx.strokeRect(rect[0]+padding, rect[1]+padding, rect[2]-padding*2, rect[3]-padding*2);
+        if (rect) {
+            ctx.strokeStyle = "#8F8";
+            ctx.lineWidth = 1;
+            ctx.strokeRect(rect[0]+padding, rect[1]+padding, rect[2]-padding*2, rect[3]-padding*2);
+        }
     })
 }
 
