@@ -18,7 +18,7 @@ app.registerExtension({
         const original_getCanvasMenuOptions = LGraphCanvas.prototype.getCanvasMenuOptions;
         LGraphCanvas.prototype.getCanvasMenuOptions = function () {
             const options = original_getCanvasMenuOptions.apply(this, arguments);
-            if (app.runningNodeId) {
+            if (FlowState.running()) {
                 options.push(null); // divider
                 options.push({
                     content: `Cancel current run`,
@@ -46,7 +46,8 @@ app.registerExtension({
             const getExtraMenuOptions = nodeType.prototype.getExtraMenuOptions;
             nodeType.prototype.getExtraMenuOptions = function(_, options) {
                 getExtraMenuOptions?.apply(this,arguments);
-                const imageIndex = (this.imageIndex != null) ? this.imageIndex : this.overIndex;
+                var imageIndex = (this.imageIndex != null) ? this.imageIndex : this.overIndex;
+                if (!imageIndex && this?.imgs?.length==1) imageIndex = 0;
                 if (FlowState.paused() && FlowState.here(this.id)) {
                     if (imageIndex!=null) {
                         options.unshift(
