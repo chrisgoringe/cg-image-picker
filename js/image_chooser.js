@@ -1,9 +1,10 @@
 import { app } from "../../../scripts/app.js";
-import { restart_from_here } from "./image_chooser_prompt.js";
+import { api } from "../../../scripts/api.js";
 
+import { restart_from_here } from "./image_chooser_prompt.js";
 import { hud, FlowState } from "./image_chooser_hud.js";
-import { message_button, cancel_button, send_message_from_pausing_node, send_cancel, send_message } from "./image_chooser_messaging.js";
-import { Logger } from "./logger.js";
+import { send_message_from_pausing_node, send_cancel, send_message } from "./image_chooser_messaging.js";
+import { display_preview_images } from "./image_chooser_preview.js";
 
 app.registerExtension({
 	name: "cg.custom.image_chooser",
@@ -27,44 +28,31 @@ app.registerExtension({
             return options;
         }
 
-        // if we are reloading from another version, widget values might be broken...
-        app.graph._nodes.forEach((node)=>{
-            if (node.type==="Image Chooser" || node.type==="Latent Chooser") {
-                node.widgets.forEach((w)=>{
-                    if (w.type==="combo" && !w.options.values.includes(w.value)) w.value = w.options.values[0];
-                    if (w.name==="choice" && !/[1-9]/.test(w.value)) w.value = "1";  // choice must contain a number>0
-                })
-            }
-        })
+        function earlyImageHandler(event) {
+            display_preview_images(event);
+        }
+        api.addEventListener("early-image-handler", earlyImageHandler);
     },
     async nodeCreated(node) {
-        if (node?.comfyClass === "Multi Latent Chooser") {
-            const go_widget = message_button(node, "go", (node)=>{ 
-                return {
-                    positive : node.widgets[1].value,
-                    negative : node.widgets[2].value,
-                    mode     : node.widgets[3].value,
-                }
-            });
-            const cancel_widget = cancel_button(node);
-            go_widget.serialize = false;
-            cancel_widget.serialize = false;
+        if (node?.comfyClass === "Preview Chooser") {
+            Object.defineProperty(node, 'imageIndex', {
+                get : function() { return null; },
+                set : function( v ) {}
+            })
         }
     },
     async beforeRegisterNodeDef(nodeType, nodeData, app) {
-        if (nodeType?.comfyClass==="Preview for Image Chooser") {
+        if (nodeType?.comfyClass==="Preview Chooser") {
             const getExtraMenuOptions = nodeType.prototype.getExtraMenuOptions;
             nodeType.prototype.getExtraMenuOptions = function(_, options) {
                 getExtraMenuOptions?.apply(this,arguments);
                 const imageIndex = (this.imageIndex != null) ? this.imageIndex : this.overIndex;
-                if (FlowState.paused()) {
+                if (FlowState.paused() && FlowState.here(this.id)) {
                     if (imageIndex!=null) {
                         options.unshift(
                             {
                                 content: "Progress this image",
-                                callback: () => { 
-                                    send_message_from_pausing_node(imageIndex+1); 
-                                }
+                                callback: () => { send_message_from_pausing_node(imageIndex+1);  }
                             },
                             null,
                         )
@@ -72,9 +60,7 @@ app.registerExtension({
                     options.unshift(
                         {
                             content: "Cancel this run",
-                            callback: () => { 
-                                send_cancel(); 
-                            }
+                            callback: () => { send_cancel(); }
                         },
                         null,
                     );
@@ -83,48 +69,7 @@ app.registerExtension({
                     options.unshift(
                         {
                             content: "Progress this image (as restart)",
-                            callback: () => { 
-                                restart_from_here(this.id, true).then(() => {send_message(-1, imageIndex+1)});
-                            }
-                        },
-                        null,
-                    )
-                }
-            }
-        }
-
-        if (nodeType?.comfyClass === "Image Chooser" || nodeType?.comfyClass === "Latent Chooser") {
-            nodeType.prototype.isChooser = true;
-            const getExtraMenuOptions = nodeType.prototype.getExtraMenuOptions;
-            nodeType.prototype.getExtraMenuOptions = function(_, options) {
-                getExtraMenuOptions?.apply(this,arguments);
-                if (FlowState.idle()) {  // && this.hasBeenExecutedAtLeastOnce
-                    options.push(
-                        {
-                            content: "Restart from here",
-                            callback: async () => {
-                                Logger.trace("Restart from here", arguments, this);
-                                restart_from_here(this.id).then(() => {send_message(this.widgets[0].value, this.widgets[1].value)});
-                            }
-                        },
-                        null,
-                    )
-                }
-                if (FlowState.here(this.id)) {
-                    options.push(
-                        {
-                            content: "Go",
-                            callback: async () => {
-                                Logger.trace("Go", arguments, this);
-                                send_message(this.widgets[0].value, this.widgets[1].value);
-                            }
-                        },
-                        {
-                            content: "Cancel",
-                            callback: async () => {
-                                Logger.trace("cancel", arguments, this);
-                                send_cancel();
-                            }
+                            callback: () => { restart_from_here(this.id).then(() => {send_message(-1, imageIndex+1)});  }
                         },
                         null,
                     )

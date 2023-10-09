@@ -41,7 +41,8 @@ class HUD {
             this.class_of_current_node = app.graph?._nodes_by_id[app.runningNodeId.toString()]?.comfyClass;
             this.current_node_is_chooser = (this.class_of_current_node === "Image Chooser" || 
                                             this.class_of_current_node === "Latent Chooser" || 
-                                            this.class_of_current_node === "Multi Latent Chooser");
+                                            this.class_of_current_node === "Multi Latent Chooser" ||
+                                            this.class_of_current_node === "Preview Chooser");
             this.span.textContent = `${FlowState.state()} in ${this.class_of_current_node} (${this.current_node_id}) `;
             this.the_cancel_button.style.display = "inline";
         } else {

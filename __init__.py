@@ -2,15 +2,12 @@ import sys, os, shutil
 import folder_paths
 
 sys.path.insert(0,os.path.dirname(os.path.realpath(__file__)))
-from .image_chooser import *
+from .image_preview_chooser import PreviewAndChoose
 module_root_directory = os.path.dirname(os.path.realpath(__file__))
 module_js_directory = os.path.join(module_root_directory, "js")
 
 NODE_CLASS_MAPPINGS = { 
-    "Image Chooser" : ImageChooser,
-    "Preview for Image Chooser" : PreviewImageChooser,
-    "Latent Chooser" : LatentChooser,
-    "Multi Latent Chooser" : MultiLatentChooser,
+    "Preview Chooser" : PreviewAndChoose,
                       }
 
 __all__ = ['NODE_CLASS_MAPPINGS']
@@ -40,3 +37,5 @@ shutil.copytree(module_js_directory, extension_web_extensions_directory, dirs_ex
 old_web_extensions_directory = os.path.join(application_root_directory, "web", "extensions", "cg-nodes", "cg_image_picker")
 if os.path.exists(old_web_extensions_directory):
     shutil.rmtree(old_web_extensions_directory)
+
+

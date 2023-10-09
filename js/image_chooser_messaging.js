@@ -17,20 +17,4 @@ function send_cancel() {
     api.interrupt();
 }
 
-function message_button(node, label, make_value) {
-    return node.addWidget("button", label, "", () => {
-        if (app.runningNodeId===node.id.toString()) {
-            send_message(node.widgets[0].value, make_value(node))
-        };
-    });
-}
-
-function cancel_button(node) {
-    return node.addWidget("button", "cancel", "", () => {
-        if (app.runningNodeId===node.id.toString()) {
-            send_cancel();
-        };
-    });
-}
-
-export { send_message_from_pausing_node, message_button, cancel_button, send_cancel, send_message }
+export { send_message_from_pausing_node, send_cancel, send_message }
