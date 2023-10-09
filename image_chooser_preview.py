@@ -34,8 +34,10 @@ class PreviewAndChoose(PreviewImage):
             self.stashed['images']  = kwargs['images']
             self.stashed['latents'] = kwargs['latents'] if 'latents' in kwargs else None
         else:
-            kwargs['images']  = self.stashed['images']
-            kwargs['latents'] = self.stashed['latents']
+            kwargs['images']  = self.stashed['images'] if 'images' in self.stashed else None
+            kwargs['latents'] = self.stashed['latents'] if 'latents' in self.stashed else None
+            if (kwargs['images'] is None):
+                return (None, None,)
 
         # extract from inputs
         latent_in         = kwargs.pop("latents", None)
