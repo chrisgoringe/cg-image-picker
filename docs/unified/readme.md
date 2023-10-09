@@ -2,6 +2,20 @@
 
 This is a work in progress...
 
+## How to get it
+
+If you have the image chooser custom nodes installed, you can switch to the development branch like this:
+
+```
+cd [comfy install]/custom_nodes/cg-image-picker
+git switch unify-chooser
+git pull
+```
+and restart Comfy
+(to switch back, just `git switch main`)
+
+## What is it?
+
 A single node that combines image preview with single- or multi-pick chooser, 'restart from here', and the HUD.
 
 This dog has a basic workflow, using only regular nodes and the Unified Chooser. If you're going to try the node out, please start with this - if it doesn't work, nothing more complicated will! And it's much easier to narrow down problems on a simple workflow!
