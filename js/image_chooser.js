@@ -44,7 +44,7 @@ app.registerExtension({
     async beforeRegisterNodeDef(nodeType, nodeData, app) {
         if (nodeType?.comfyClass==="Preview Chooser") {
             const onDrawBackground = nodeType.prototype.onDrawBackground;
-            nodeType.prototype.onDrawBackground = () => {
+            nodeType.prototype.onDrawBackground = function() {
                 onDrawBackground.apply(this, arguments);
                 additionalDrawBackground(this);
             }
