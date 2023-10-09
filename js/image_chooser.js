@@ -39,15 +39,16 @@ app.registerExtension({
                 get : function() { return null; },
                 set : function( v ) {}
             })
-            const onDrawBackground = node.prototype.onDrawBackground;
-            node.prototype.onDrawBackground = () => {
-                onDrawBackground.apply(node, arguments);
-                additionalDrawBackground(node);
-            }
         }
     },
     async beforeRegisterNodeDef(nodeType, nodeData, app) {
         if (nodeType?.comfyClass==="Preview Chooser") {
+            const onDrawBackground = nodeType.prototype.onDrawBackground;
+            nodeType.prototype.onDrawBackground = () => {
+                onDrawBackground.apply(this, arguments);
+                additionalDrawBackground(this);
+            }
+
             const getExtraMenuOptions = nodeType.prototype.getExtraMenuOptions;
             nodeType.prototype.getExtraMenuOptions = function(_, options) {
                 getExtraMenuOptions?.apply(this,arguments);
