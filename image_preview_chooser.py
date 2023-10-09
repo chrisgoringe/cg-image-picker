@@ -58,7 +58,7 @@ class PreviewAndChoose(PreviewImage):
             return (None, None,)
 
         # batch up the output
-        images_out = torch.cat(tuple([images_in[(x-1)%batch].unsqueeze_(0) for x in selections]))
+        images_out = torch.cat(tuple([images_in[(x)%batch].unsqueeze_(0) for x in selections]))
         if len(images_out.shape)==3:
             images_out.unsqueeze_(0)
         if latent_samples_in is not None:

@@ -57,6 +57,7 @@ app.registerExtension({
                 if ((FlowState.paused() && FlowState.here(this.id)) || 
                     (FlowState.idle()   && this?.imgs?.length>0)) {
                     if (imageIndex!=null) {
+                        options.unshift(null);
                         if (this.selected.has(imageIndex)) {
                             options.unshift(
                                 {
@@ -87,9 +88,9 @@ app.registerExtension({
                                     content: (this.selected.size>1) ? "Progress selected images (as restart)" : "Progress selected image (as restart)",
                                     callback: () => { restart_from_here(this.id).then(() => {send_message(this.widgets[0].value, [...this.selected])});  }
                                 },
-                                null,
                             )
                         }
+                        options.unshift(null);
                     }
                     options.unshift(
                         {
