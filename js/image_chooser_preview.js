@@ -7,6 +7,7 @@ function display_preview_images(event) {
         return false;
     });
     if (node) {
+        node.selected = [];
         showImages(node, event.detail.urls);
     } else {
         console.log(`Image Chooser Preview - failed to find ${event.detail.id}`)
@@ -24,4 +25,6 @@ function showImages(node, urls) {
     node.setSizeForImage?.();
 }
 
-export { display_preview_images }
+function additionalDrawBackground(node) {}
+
+export { display_preview_images, additionalDrawBackground }

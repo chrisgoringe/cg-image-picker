@@ -4,7 +4,7 @@ import { api } from "../../../scripts/api.js";
 import { restart_from_here } from "./image_chooser_prompt.js";
 import { hud, FlowState } from "./image_chooser_hud.js";
 import { send_message_from_pausing_node, send_cancel, send_message } from "./image_chooser_messaging.js";
-import { display_preview_images } from "./image_chooser_preview.js";
+import { display_preview_images, additionalDrawBackground } from "./image_chooser_preview.js";
 
 app.registerExtension({
 	name: "cg.custom.image_chooser",
@@ -39,6 +39,11 @@ app.registerExtension({
                 get : function() { return null; },
                 set : function( v ) {}
             })
+            const onDrawBackground = node.prototype.onDrawBackground;
+            node.prototype.onDrawBackground = () => {
+                onDrawBackground.apply(node, arguments);
+                additionalDrawBackground(node);
+            }
         }
     },
     async beforeRegisterNodeDef(nodeType, nodeData, app) {

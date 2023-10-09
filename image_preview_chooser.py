@@ -8,7 +8,7 @@ class PreviewAndChoose(PreviewImage):
     RETURN_TYPES = ("IMAGE","LATENT",)
     RETURN_NAMES = ("images","latent",)
     FUNCTION = "func"
-    CATEGORY = "utilities/control/_testing"
+    CATEGORY = "image_chooser"
     @classmethod
     def INPUT_TYPES(s):
         return {
