@@ -21,6 +21,7 @@ try:
         raise Exception()
     if CLEAN:
         raise Exception()
+
 except:
     print("cg_custom_core 2.3 not found - will try to install - you may need to restart afterwards")
     from .install import installer
@@ -29,7 +30,6 @@ except:
     application_root_directory = os.path.dirname(folder_paths.__file__)
     installer(os.path.join(application_root_directory,"custom_nodes"))
 
-    
 application_root_directory = os.path.dirname(folder_paths.__file__)
 extension_web_extensions_directory = os.path.join(application_root_directory, "web", "extensions", "image_chooser")
 if os.path.exists(extension_web_extensions_directory):
@@ -39,5 +39,3 @@ shutil.copytree(module_js_directory, extension_web_extensions_directory, dirs_ex
 old_web_extensions_directory = os.path.join(application_root_directory, "web", "extensions", "cg-nodes", "cg_image_picker")
 if os.path.exists(old_web_extensions_directory):
     shutil.rmtree(old_web_extensions_directory)
-
-
