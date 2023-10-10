@@ -14,6 +14,14 @@ git pull
 and restart Comfy
 (to switch back, just `git switch main`)
 
+If you don't have the image chooser custom nodes:
+```
+cd [comfy install]/custom_nodes
+git clone https://github.com/chrisgoringe/cg-image-picker
+cd cg-image-picker
+git switch unify-chooser
+```
+
 ## What is it?
 
 A single node that combines image preview with single- or multi-pick chooser, 'restart from here', and the HUD.
