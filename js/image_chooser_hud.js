@@ -1,42 +1,84 @@
 import { $el } from "../../../scripts/ui.js";
 import { send_cancel } from "./image_chooser_messaging.js";
 
-var class_of_current_node;
-function node_is_chooser(node) {
-    class_of_current_node = node?.comfyClass;
-    return (node?.comfyClass === "Image Chooser" || node?.comfyClass === "Latent Chooser" || node?.comfyClass === "Multi Latent Chooser");
-}
+class HUD {
 
-const hovering_cancel = $el("div", {
-    style: { 
-        "position": "fixed", 
-        "top":"100px", 
-        "left":"100px", 
-        "border":"thin solid #f66", 
-        "visibility":"hidden", 
-        "padding":"8px", 
-        "opacity":0.8,
-    }},
-    [
-        $el("span", { style: {}, textContent: "" }),
-        $el("button", {
+    constructor() {
+        this.span = $el("span", { style: {}, textContent: "" });
+        this.the_cancel_button = $el("button", {
             textContent: "Cancel",
             onclick: () => {send_cancel();},
             style: {  }
         })
-    ]
-)
-hovering_cancel.isVisible = false;
-hovering_cancel.setVisible = (visible) => {
-    if (visible===hovering_cancel.isVisible) return;
-    hovering_cancel.isVisible = visible;
-    hovering_cancel.style.visibility = (visible) ? "visible" : "hidden";
-    hovering_cancel.firstChild.textContent = `Paused in ${class_of_current_node} (${app.runningNodeId}) - `;
-};
-document.body.append(hovering_cancel);
+        this.hud = $el("div", {
+            style: { 
+                "position": "fixed", 
+                "top":"10px", 
+                "left":"10px", 
+                "border":"thin solid #f66", 
+                "padding":"8px", 
+                "opacity":0.8,
+            }},
+            [
+                this.span, this.the_cancel_button
+            ]
+        )
+        this.span.textContent = "Idle";
+        this.the_cancel_button.style.display = "none";
 
-function flow_is_paused() {
-    return hovering_cancel.isVisible;
+        document.body.append(this.hud);
+        this.current_node_id = undefined;
+        this.class_of_current_node = null;
+        this.current_node_is_chooser = false;
+    }
+
+    update() {
+        if (app.runningNodeId==this.current_node_id) return;
+
+        this.current_node_id = app.runningNodeId;
+        
+        if (this.current_node_id) {
+            this.class_of_current_node = app.graph?._nodes_by_id[app.runningNodeId.toString()]?.comfyClass;
+            this.current_node_is_chooser = (this.class_of_current_node === "Image Chooser" || 
+                                            this.class_of_current_node === "Latent Chooser" || 
+                                            this.class_of_current_node === "Multi Latent Chooser" ||
+                                            this.class_of_current_node === "Preview Chooser");
+            this.span.textContent = `${FlowState.state()} in ${this.class_of_current_node} (${this.current_node_id}) `;
+            this.the_cancel_button.style.display = "inline";
+        } else {
+            this.class_of_current_node = undefined;
+            this.current_node_is_chooser = false;
+            this.span.textContent = "Idle";
+            this.the_cancel_button.style.display = "none";
+        }
+    }
 }
 
-export { hovering_cancel, node_is_chooser, flow_is_paused }
+const hud = new HUD();
+
+class FlowState {
+    constructor(){}
+    static idle() {
+        return (!app.runningNodeId);
+    }
+    static paused() {
+        return (hud.current_node_is_chooser);
+    }
+    static paused_here(node_id) {
+        return (FlowState.paused() && FlowState.here(node_id))
+    }
+    static running() {
+        return (app.runningNodeId>=0);
+    }
+    static here(node_id) {
+        return (app.runningNodeId==node_id);
+    }
+    static state() {
+        if (FlowState.paused()) return "Paused";
+        if (FlowState.running()) return "Running";
+        if (FlowState.idle()) return "Idle";
+        return "?";
+    }
+}
+
+export { hud, FlowState }

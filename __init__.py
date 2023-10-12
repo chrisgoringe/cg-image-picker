@@ -2,28 +2,28 @@ import sys, os, shutil
 import folder_paths
 
 sys.path.insert(0,os.path.dirname(os.path.realpath(__file__)))
-from .image_chooser import *
+from .image_chooser_preview import PreviewAndChoose
 module_root_directory = os.path.dirname(os.path.realpath(__file__))
 module_js_directory = os.path.join(module_root_directory, "js")
 
 NODE_CLASS_MAPPINGS = { 
-    "Image Chooser" : ImageChooser,
-    "Preview for Image Chooser" : PreviewImageChooser,
-    "Latent Chooser" : LatentChooser,
-    "Multi Latent Chooser" : MultiLatentChooser,
+    "Preview Chooser" : PreviewAndChoose,
                       }
 
 __all__ = ['NODE_CLASS_MAPPINGS']
 
-IP_VERSION = 2.4
+IP_VERSION = 2.5
+CLEAN = False
 
 try:
     from custom_nodes.cg_custom_core import CC_VERSION
-    if CC_VERSION < 2.2:
+    if CC_VERSION < 2.3:
+        raise Exception()
+    if CLEAN:
         raise Exception()
 
 except:
-    print("cg_custom_core 2.2 not found - will try to install - you may need to restart afterwards")
+    print("cg_custom_core 2.3 not found - will try to install - you may need to restart afterwards")
     from .install import installer
     import os
     import folder_paths

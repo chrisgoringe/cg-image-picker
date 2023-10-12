@@ -1,21 +1,24 @@
 import { app } from "../../../scripts/app.js";
+import { api } from "../../../scripts/api.js";
 
-import { hovering_cancel, node_is_chooser, flow_is_paused } from "./image_chooser_hud.js";
-import { message_button, cancel_button, send_message_from_pausing_node, send_cancel } from "./image_chooser_messaging.js";
+import { restart_from_here } from "./image_chooser_prompt.js";
+import { hud, FlowState } from "./image_chooser_hud.js";
+import { send_cancel, send_message } from "./image_chooser_messaging.js";
+import { display_preview_images, additionalDrawBackground } from "./image_chooser_preview.js";
 
 app.registerExtension({
 	name: "cg.custom.image_chooser",
     setup() {
         const draw = LGraphCanvas.prototype.draw;
         LGraphCanvas.prototype.draw = function() {
-            hovering_cancel.setVisible(app.runningNodeId && node_is_chooser(app.graph._nodes_by_id[app.runningNodeId.toString()]));
+            hud.update();
             draw.apply(this,arguments);
         }
 
         const original_getCanvasMenuOptions = LGraphCanvas.prototype.getCanvasMenuOptions;
         LGraphCanvas.prototype.getCanvasMenuOptions = function () {
             const options = original_getCanvasMenuOptions.apply(this, arguments);
-            if (app.runningNodeId) {
+            if (FlowState.running()) {
                 options.push(null); // divider
                 options.push({
                     content: `Cancel current run`,
@@ -25,51 +28,87 @@ app.registerExtension({
             return options;
         }
 
-        // if we are reloading from another version, widget values might be broken...
-        app.graph._nodes.forEach((node)=>{
-            if (node.type==="Image Chooser" || node.type==="Latent Chooser") {
-                node.widgets.forEach((w)=>{
-                    if (w.type==="combo" && !w.options.values.includes(w.value)) w.value = w.options.values[0];
-                })
-            }
-        })
+        function earlyImageHandler(event) {
+            display_preview_images(event);
+        }
+        api.addEventListener("early-image-handler", earlyImageHandler);
     },
     async nodeCreated(node) {
-        if (node?.comfyClass === "Image Chooser" || node?.comfyClass === "Latent Chooser" ) {
-            const pk_widget = node.addWidget("combo", "choice", 1, () => {}, { values: [1,2,3,4,5,6,7,8] });
-            const go_widget = message_button(node, "go", (node)=>{ 
-                return pk_widget.value 
-            });
-            const cancel_widget = cancel_button(node);
-            go_widget.serialize = false;
-            pk_widget.serialize = false;  
-            cancel_widget.serialize = false;
-        }
-        if (node?.comfyClass === "Multi Latent Chooser") {
-            const go_widget = message_button(node, "go", (node)=>{ 
-                return {
-                    positive : node.widgets[1].value,
-                    negative : node.widgets[2].value,
-                    mode     : node.widgets[3].value,
-                }
-            });
-            const cancel_widget = cancel_button(node);
-            go_widget.serialize = false;
-            cancel_widget.serialize = false;
+        if (node?.comfyClass === "Preview Chooser") {
+            Object.defineProperty(node, 'imageIndex', {
+                get : function() { return null; },
+                set : function( v ) {}
+            })
         }
     },
     async beforeRegisterNodeDef(nodeType, nodeData, app) {
-        if (nodeType?.comfyClass==="Preview for Image Chooser") {
+        if (nodeType?.comfyClass==="Preview Chooser") {
+            const onDrawBackground = nodeType.prototype.onDrawBackground;
+            nodeType.prototype.onDrawBackground = function(ctx) {
+                onDrawBackground.apply(this, arguments);
+                additionalDrawBackground(this, ctx);
+            }
+
             const getExtraMenuOptions = nodeType.prototype.getExtraMenuOptions;
             nodeType.prototype.getExtraMenuOptions = function(_, options) {
                 getExtraMenuOptions?.apply(this,arguments);
-                if (flow_is_paused()) {
-                    const imageIndex = (this.imageIndex != null) ? this.imageIndex : this.overIndex;
+                var imageIndex = (this.imageIndex != null) ? this.imageIndex : this.overIndex;
+                if (!imageIndex && this?.imgs?.length==1) imageIndex = 0;
+                if ((FlowState.paused() && FlowState.here(this.id)) || 
+                    (FlowState.idle()   && this?.imgs?.length>0)) {
+                    if (imageIndex!=null) {
+                        options.unshift(null);
+                        if (this.selected.has(imageIndex) && this.imgs.length>1) {
+                            options.unshift(
+                                {
+                                    content: "Unselect",
+                                    callback: () => { this.selected.delete(imageIndex); this.setDirtyCanvas(true,true); }
+                                },
+                            )
+                        }
+                        if (!this.selected.has(imageIndex) && this.imgs.length>1) {
+                            options.unshift (
+                                {
+                                    content: "Select",
+                                    callback: () => { this.selected.add(imageIndex); this.setDirtyCanvas(true,true);  }
+                                }
+                            )
+                        }
+                        if ((this.selected.size > 0) && FlowState.paused_here(this.id) && this.imgs.length>1) {
+                            options.unshift(
+                                {
+                                    content: (this.selected.size>1) ? "Progress selected images" : "Progress selected image",
+                                    callback: () => { send_message(this.widgets[0].value, [...this.selected]);  }
+                                },
+                            )
+                        }
+                        if (FlowState.paused_here(this.id) && this.imgs.length==1) {
+                            options.unshift(
+                                {
+                                    content: "Progress image" ,
+                                    callback: () => { send_message(this.widgets[0].value, [0]);  }
+                                },
+                            )
+                        }
+                        if ((this.selected.size > 0) && FlowState.idle()) {
+                            options.unshift(
+                                {
+                                    content: (this.selected.size>1) ? "Progress selected images (as restart)" : "Progress selected image (as restart)",
+                                    callback: () => { restart_from_here(this.id).then(() => {send_message(this.widgets[0].value, [...this.selected])});  }
+                                },
+                            )
+                        }
+                        if (this.imgs.length==1 && FlowState.idle()) {
+                            options.unshift(
+                                {
+                                    content: "Progress image (as restart)",
+                                    callback: () => { restart_from_here(this.id).then(() => {send_message(this.widgets[0].value, [0])});  }
+                                },
+                            )
+                        }
+                        options.unshift(null);
+                    }
                     options.unshift(
-                        {
-                            content: "Progress this image",
-                            callback: () => { send_message_from_pausing_node(imageIndex+1); }
-                        },
                         {
                             content: "Cancel this run",
                             callback: () => { send_cancel(); }
