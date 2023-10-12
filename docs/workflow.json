@@ -1,6 +1,6 @@
 {
-  "last_node_id": 14,
-  "last_link_id": 20,
+  "last_node_id": 19,
+  "last_link_id": 32,
   "nodes": [
     {
       "id": 4,
@@ -166,24 +166,24 @@
       ]
     },
     {
-      "id": 11,
+      "id": 10,
       "type": "Reroute",
       "pos": [
-        883,
-        484
+        456,
+        487
       ],
       "size": [
         75,
         26
       ],
       "flags": {},
-      "order": 6,
+      "order": 4,
       "mode": 0,
       "inputs": [
         {
           "name": "",
           "type": "*",
-          "link": 18
+          "link": 11
         }
       ],
       "outputs": [
@@ -191,7 +191,7 @@
           "name": "",
           "type": "VAE",
           "links": [
-            13
+            18
           ],
           "slot_index": 0
         }
@@ -199,47 +199,6 @@
       "properties": {
         "showOutputText": false,
         "horizontal": false
-      }
-    },
-    {
-      "id": 7,
-      "type": "VAEDecode",
-      "pos": [
-        1117,
-        62
-      ],
-      "size": {
-        "0": 210,
-        "1": 46
-      },
-      "flags": {},
-      "order": 7,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "samples",
-          "type": "LATENT",
-          "link": 6
-        },
-        {
-          "name": "vae",
-          "type": "VAE",
-          "link": 13
-        }
-      ],
-      "outputs": [
-        {
-          "name": "IMAGE",
-          "type": "IMAGE",
-          "links": [
-            19
-          ],
-          "shape": 3,
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "VAEDecode"
       }
     },
     {
@@ -283,7 +242,8 @@
           "name": "LATENT",
           "type": "LATENT",
           "links": [
-            6
+            6,
+            25
           ],
           "shape": 3,
           "slot_index": 0
@@ -303,24 +263,65 @@
       ]
     },
     {
-      "id": 10,
+      "id": 7,
+      "type": "VAEDecode",
+      "pos": [
+        1119,
+        -12
+      ],
+      "size": {
+        "0": 210,
+        "1": 46
+      },
+      "flags": {},
+      "order": 7,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 6
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 13
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            23
+          ],
+          "shape": 3,
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VAEDecode"
+      }
+    },
+    {
+      "id": 11,
       "type": "Reroute",
       "pos": [
-        456,
-        487
+        883,
+        484
       ],
       "size": [
         75,
         26
       ],
       "flags": {},
-      "order": 4,
+      "order": 6,
       "mode": 0,
       "inputs": [
         {
           "name": "",
           "type": "*",
-          "link": 11
+          "link": 18
         }
       ],
       "outputs": [
@@ -328,7 +329,8 @@
           "name": "",
           "type": "VAE",
           "links": [
-            18
+            13,
+            28
           ],
           "slot_index": 0
         }
@@ -339,16 +341,57 @@
       }
     },
     {
-      "id": 14,
-      "type": "Preview for Image Chooser",
+      "id": 17,
+      "type": "VAEDecode",
       "pos": [
-        1120,
-        177
+        1684,
+        456
       ],
       "size": {
         "0": 210,
-        "1": 246
+        "1": 46
       },
+      "flags": {},
+      "order": 9,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 27
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 28
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            29
+          ],
+          "shape": 3,
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VAEDecode"
+      }
+    },
+    {
+      "id": 15,
+      "type": "Preview Chooser",
+      "pos": [
+        1367,
+        37
+      ],
+      "size": [
+        315,
+        314
+      ],
       "flags": {},
       "order": 8,
       "mode": 0,
@@ -356,82 +399,104 @@
         {
           "name": "images",
           "type": "IMAGE",
-          "link": 19
-        }
-      ],
-      "outputs": [
-        {
-          "name": "images",
-          "type": "IMAGE",
-          "links": [
-            20
-          ],
-          "shape": 3,
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "Preview for Image Chooser"
-      }
-    },
-    {
-      "id": 2,
-      "type": "Image Chooser",
-      "pos": [
-        1372,
-        179
-      ],
-      "size": {
-        "0": 210,
-        "1": 150
-      },
-      "flags": {},
-      "order": 9,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "images",
-          "type": "IMAGE",
-          "link": 20
+          "link": 23
         },
         {
-          "name": "trigger",
-          "type": "*",
-          "link": null
+          "name": "latents",
+          "type": "LATENT",
+          "link": 25
         }
       ],
       "outputs": [
         {
-          "name": "image",
+          "name": "images",
           "type": "IMAGE",
           "links": [
-            10
+            30
           ],
           "shape": 3,
           "slot_index": 0
+        },
+        {
+          "name": "latent",
+          "type": "LATENT",
+          "links": [
+            27,
+            31
+          ],
+          "shape": 3,
+          "slot_index": 1
         }
       ],
       "properties": {
-        "Node name for S&R": "Image Chooser"
+        "Node name for S&R": "Preview Chooser"
       },
       "widgets_values": [
-        3,
-        1,
-        "",
-        ""
+        3017607,
+        "Always pause"
       ]
     },
     {
       "id": 9,
       "type": "PreviewImage",
       "pos": [
-        1375,
-        385
+        1939,
+        451
       ],
       "size": {
         "0": 210,
         "1": 246
       },
+      "flags": {},
+      "order": 11,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 29
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "PreviewImage"
+      }
+    },
+    {
+      "id": 19,
+      "type": "PreviewImage",
+      "pos": [
+        2099,
+        39
+      ],
+      "size": {
+        "0": 210,
+        "1": 246
+      },
+      "flags": {},
+      "order": 12,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 32
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "PreviewImage"
+      }
+    },
+    {
+      "id": 18,
+      "type": "Preview Chooser",
+      "pos": [
+        1739,
+        38
+      ],
+      "size": [
+        315,
+        314
+      ],
       "flags": {},
       "order": 10,
       "mode": 0,
@@ -439,12 +504,39 @@
         {
           "name": "images",
           "type": "IMAGE",
-          "link": 10
+          "link": 30
+        },
+        {
+          "name": "latents",
+          "type": "LATENT",
+          "link": 31
+        }
+      ],
+      "outputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "links": [
+            32
+          ],
+          "shape": 3,
+          "slot_index": 0
+        },
+        {
+          "name": "latent",
+          "type": "LATENT",
+          "links": [],
+          "shape": 3,
+          "slot_index": 1
         }
       ],
       "properties": {
-        "Node name for S&R": "PreviewImage"
-      }
+        "Node name for S&R": "Preview Chooser"
+      },
+      "widgets_values": [
+        2665486,
+        "Always pause"
+      ]
     }
   ],
   "links": [
@@ -471,14 +563,6 @@
       7,
       0,
       "LATENT"
-    ],
-    [
-      10,
-      2,
-      0,
-      9,
-      0,
-      "IMAGE"
     ],
     [
       11,
@@ -537,18 +621,66 @@
       "*"
     ],
     [
-      19,
+      23,
       7,
       0,
-      14,
+      15,
       0,
       "IMAGE"
     ],
     [
-      20,
-      14,
+      25,
+      6,
       0,
-      2,
+      15,
+      1,
+      "LATENT"
+    ],
+    [
+      27,
+      15,
+      1,
+      17,
+      0,
+      "LATENT"
+    ],
+    [
+      28,
+      11,
+      0,
+      17,
+      1,
+      "VAE"
+    ],
+    [
+      29,
+      17,
+      0,
+      9,
+      0,
+      "IMAGE"
+    ],
+    [
+      30,
+      15,
+      0,
+      18,
+      0,
+      "IMAGE"
+    ],
+    [
+      31,
+      15,
+      1,
+      18,
+      1,
+      "LATENT"
+    ],
+    [
+      32,
+      18,
+      0,
+      19,
       0,
       "IMAGE"
     ]
