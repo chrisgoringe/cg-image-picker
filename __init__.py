@@ -12,23 +12,8 @@ NODE_CLASS_MAPPINGS = {
 
 __all__ = ['NODE_CLASS_MAPPINGS']
 
-IP_VERSION = 2.5
+IP_VERSION = "2.5.1"
 CLEAN = False
-
-try:
-    from custom_nodes.cg_custom_core import CC_VERSION
-    if CC_VERSION < 2.3:
-        raise Exception()
-    if CLEAN:
-        raise Exception()
-
-except:
-    print("cg_custom_core 2.3 not found - will try to install - you may need to restart afterwards")
-    from .install import installer
-    import os
-    import folder_paths
-    application_root_directory = os.path.dirname(folder_paths.__file__)
-    installer(os.path.join(application_root_directory,"custom_nodes"))
 
 application_root_directory = os.path.dirname(folder_paths.__file__)
 extension_web_extensions_directory = os.path.join(application_root_directory, "web", "extensions", "image_chooser")
