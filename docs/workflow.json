@@ -388,10 +388,10 @@
         1367,
         37
       ],
-      "size": [
-        315,
-        314
-      ],
+      "size": {
+        "0": 315,
+        "1": 126
+      },
       "flags": {},
       "order": 8,
       "mode": 0,
@@ -432,8 +432,9 @@
         "Node name for S&R": "Preview Chooser"
       },
       "widgets_values": [
-        3017607,
-        "Always pause"
+        9677076,
+        "Always pause",
+        ""
       ]
     },
     {
@@ -493,10 +494,10 @@
         1739,
         38
       ],
-      "size": [
-        315,
-        314
-      ],
+      "size": {
+        "0": 315,
+        "1": 126
+      },
       "flags": {},
       "order": 10,
       "mode": 0,
@@ -534,8 +535,9 @@
         "Node name for S&R": "Preview Chooser"
       },
       "widgets_values": [
-        2665486,
-        "Always pause"
+        812561,
+        "Always pause",
+        ""
       ]
     }
   ],

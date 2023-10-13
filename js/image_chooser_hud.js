@@ -2,14 +2,8 @@ import { $el } from "../../../scripts/ui.js";
 import { send_cancel } from "./image_chooser_messaging.js";
 
 class HUD {
-
     constructor() {
         this.span = $el("span", { style: {}, textContent: "" });
-        this.the_cancel_button = $el("button", {
-            textContent: "Cancel",
-            onclick: () => {send_cancel();},
-            style: {  }
-        })
         this.hud = $el("div", {
             style: { 
                 "position": "fixed", 
@@ -20,11 +14,10 @@ class HUD {
                 "opacity":0.8,
             }},
             [
-                this.span, this.the_cancel_button
+                this.span
             ]
         )
         this.span.textContent = "Idle";
-        this.the_cancel_button.style.display = "none";
 
         document.body.append(this.hud);
         this.current_node_id = undefined;
@@ -33,7 +26,7 @@ class HUD {
     }
 
     update() {
-        if (app.runningNodeId==this.current_node_id) return;
+        if (app.runningNodeId==this.current_node_id) return false;
 
         this.current_node_id = app.runningNodeId;
         
@@ -44,13 +37,12 @@ class HUD {
                                             this.class_of_current_node === "Multi Latent Chooser" ||
                                             this.class_of_current_node === "Preview Chooser");
             this.span.textContent = `${FlowState.state()} in ${this.class_of_current_node} (${this.current_node_id}) `;
-            this.the_cancel_button.style.display = "inline";
         } else {
             this.class_of_current_node = undefined;
             this.current_node_is_chooser = false;
             this.span.textContent = "Idle";
-            this.the_cancel_button.style.display = "none";
         }
+        return true;
     }
 }
 
@@ -68,7 +60,7 @@ class FlowState {
         return (FlowState.paused() && FlowState.here(node_id))
     }
     static running() {
-        return (app.runningNodeId>=0);
+        return (!FlowState.idle());
     }
     static here(node_id) {
         return (app.runningNodeId==node_id);
@@ -76,8 +68,7 @@ class FlowState {
     static state() {
         if (FlowState.paused()) return "Paused";
         if (FlowState.running()) return "Running";
-        if (FlowState.idle()) return "Idle";
-        return "?";
+        return "Idle";
     }
 }
 

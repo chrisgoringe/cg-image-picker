@@ -4,14 +4,27 @@ import { api } from "../../../scripts/api.js";
 import { restart_from_here } from "./image_chooser_prompt.js";
 import { hud, FlowState } from "./image_chooser_hud.js";
 import { send_cancel, send_message } from "./image_chooser_messaging.js";
-import { display_preview_images, additionalDrawBackground } from "./image_chooser_preview.js";
+import { display_preview_images, additionalDrawBackground, click_is_in_image } from "./image_chooser_preview.js";
+
+function buttonPressed() {
+    if (FlowState.paused_here(this.node.id) && this.node?.selected?.size>0) {
+        send_message(this.node.widgets[0].value, [...this.node.selected]); 
+    }
+    if (FlowState.idle() && this.node?.selected?.size>0) {
+        restart_from_here(this.node.id).then(() => {send_message(this.node.widgets[0].value, [...this.node.selected])});
+    }
+}
 
 app.registerExtension({
 	name: "cg.custom.image_chooser",
     setup() {
         const draw = LGraphCanvas.prototype.draw;
         LGraphCanvas.prototype.draw = function() {
-            hud.update();
+            if (hud.update()) {
+                app.graph._nodes.forEach((node)=> {
+                    if (node.send_button_widget) { node.send_button_widget.updateLabel(); }
+                })
+            }
             draw.apply(this,arguments);
         }
 
@@ -33,89 +46,68 @@ app.registerExtension({
         }
         api.addEventListener("early-image-handler", earlyImageHandler);
     },
+
     async nodeCreated(node) {
         if (node?.comfyClass === "Preview Chooser") {
+            /* Don't allow imageIndex to be set - this stops images jumping to the front when clicked */
             Object.defineProperty(node, 'imageIndex', {
                 get : function() { return null; },
-                set : function( v ) {}
+                set : function( v ) { }
             })
+            /* A property defining the top of the image when there is just one */
+            Object.defineProperty(node, 'imagey', {
+                get : function() { return this.widgets[this.widgets.length-1].last_y+LiteGraph.NODE_WIDGET_HEIGHT; }
+            })
+
+            /* Capture clicks */
+            const org_onMouseDown = node.onMouseDown;
+            node.onMouseDown = function( e, pos, canvas ) {
+                if (e.isPrimary) {
+                    const i = click_is_in_image(node, pos);
+                    if (i>=0) { this.imageClicked(i); }
+                }
+                return (org_onMouseDown && org_onMouseDown.apply(this, arguments));
+            }
+
+            /*
+            node.buttonPressed = function() {
+                if (FlowState.paused_here(this.node.id) && this.node?.selected?.size>0) {
+                    send_message(this.node.widgets[0].value, [...this.node.selected]); 
+                } else if (FlowState.idle() && this.node?.selected?.size>0) {
+                    restart_from_here(this.node.id).then(() => {send_message(this.node.widgets[0].value, [...this.node.selected])});
+                } 
+            }*/
+
+            /* The button */
+            node.send_button_widget = node.addWidget("button", "", "", buttonPressed)
+            node.send_button_widget.node = node;
+            node.send_button_widget.updateLabel = function () {
+                if (FlowState.paused_here(this.node.id) && this.node?.selected?.size>0) {
+                    this.name = (this.node?.selected?.size>1) ? "Progress selected images" : "Progress selected image";
+                } else if (FlowState.idle() && this.node?.selected?.size>0) {
+                    this.name = (this.node?.selected?.size>1) ? "Progress selected images as restart" : "Progress selected image as restart";
+                } else {
+                    this.name = "";
+                }
+            }
         }
     },
     async beforeRegisterNodeDef(nodeType, nodeData, app) {
         if (nodeType?.comfyClass==="Preview Chooser") {
+
+            /* Code to draw the boxes around selected images */
             const onDrawBackground = nodeType.prototype.onDrawBackground;
             nodeType.prototype.onDrawBackground = function(ctx) {
                 onDrawBackground.apply(this, arguments);
                 additionalDrawBackground(this, ctx);
             }
 
-            const getExtraMenuOptions = nodeType.prototype.getExtraMenuOptions;
-            nodeType.prototype.getExtraMenuOptions = function(_, options) {
-                getExtraMenuOptions?.apply(this,arguments);
-                var imageIndex = (this.imageIndex != null) ? this.imageIndex : this.overIndex;
-                if (!imageIndex && this?.imgs?.length==1) imageIndex = 0;
-                if ((FlowState.paused() && FlowState.here(this.id)) || 
-                    (FlowState.idle()   && this?.imgs?.length>0)) {
-                    if (imageIndex!=null) {
-                        options.unshift(null);
-                        if (this.selected.has(imageIndex) && this.imgs.length>1) {
-                            options.unshift(
-                                {
-                                    content: "Unselect",
-                                    callback: () => { this.selected.delete(imageIndex); this.setDirtyCanvas(true,true); }
-                                },
-                            )
-                        }
-                        if (!this.selected.has(imageIndex) && this.imgs.length>1) {
-                            options.unshift (
-                                {
-                                    content: "Select",
-                                    callback: () => { this.selected.add(imageIndex); this.setDirtyCanvas(true,true);  }
-                                }
-                            )
-                        }
-                        if ((this.selected.size > 0) && FlowState.paused_here(this.id) && this.imgs.length>1) {
-                            options.unshift(
-                                {
-                                    content: (this.selected.size>1) ? "Progress selected images" : "Progress selected image",
-                                    callback: () => { send_message(this.widgets[0].value, [...this.selected]);  }
-                                },
-                            )
-                        }
-                        if (FlowState.paused_here(this.id) && this.imgs.length==1) {
-                            options.unshift(
-                                {
-                                    content: "Progress image" ,
-                                    callback: () => { send_message(this.widgets[0].value, [0]);  }
-                                },
-                            )
-                        }
-                        if ((this.selected.size > 0) && FlowState.idle()) {
-                            options.unshift(
-                                {
-                                    content: (this.selected.size>1) ? "Progress selected images (as restart)" : "Progress selected image (as restart)",
-                                    callback: () => { restart_from_here(this.id).then(() => {send_message(this.widgets[0].value, [...this.selected])});  }
-                                },
-                            )
-                        }
-                        if (this.imgs.length==1 && FlowState.idle()) {
-                            options.unshift(
-                                {
-                                    content: "Progress image (as restart)",
-                                    callback: () => { restart_from_here(this.id).then(() => {send_message(this.widgets[0].value, [0])});  }
-                                },
-                            )
-                        }
-                        options.unshift(null);
-                    }
-                    options.unshift(
-                        {
-                            content: "Cancel this run",
-                            callback: () => { send_cancel(); }
-                        },
-                        null,
-                    );
-                }
+            /* Code to handle clicks on images */
+            nodeType.prototype.imageClicked = function (imageIndex) {
+                if (this.selected.has(imageIndex)) this.selected.delete(imageIndex);
+                else this.selected.add(imageIndex);
+                this.send_button_widget.updateLabel();
+                this.setDirtyCanvas(true,true); 
             }
         }
     },

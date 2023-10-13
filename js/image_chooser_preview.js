@@ -27,14 +27,34 @@ function showImages(node, urls) {
 
 function additionalDrawBackground(node, ctx) {
     node?.selected?.forEach((s) => {
+        const padding = 8;
+        var rect;
         if (node.imageRects) {
-            const rect = node.imageRects[s];
-            const padding = 8;
-            ctx.strokeStyle = "#8F8";
-            ctx.lineWidth = 1;
-            ctx.strokeRect(rect[0]+padding, rect[1]+padding, rect[2]-padding*2, rect[3]-padding*2);
-        } 
+            rect = node.imageRects[s];
+        } else {
+            const y = node.imagey;
+            rect = [padding,y+padding,node.size[0]-2*padding,node.size[1]-y-2*padding];
+        }
+        ctx.strokeStyle = "#8F8";
+        ctx.lineWidth = 1;
+        ctx.strokeRect(rect[0]+padding, rect[1]+padding, rect[2]-padding*2, rect[3]-padding*2);
     })
 }
 
-export { display_preview_images, additionalDrawBackground }
+function click_is_in_image(node, pos) {
+    if (node.imgs?.length>1) {
+        for (var i = 0; i<node.imageRects.length; i++) {
+            const dx = pos[0] - node.imageRects[i][0];
+            const dy = pos[1] - node.imageRects[i][1];
+            if ( dx > 0 && dx < node.imageRects[i][2] &&
+                dy > 0 && dy < node.imageRects[i][3] ) {
+                    return i;
+                }
+        }
+    } else if (node.imgs?.length==1) {
+        if (pos[1]>node.imagey) return 0;
+    }
+    return -1;
+}
+
+export { display_preview_images, additionalDrawBackground, click_is_in_image }
