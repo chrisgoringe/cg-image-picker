@@ -26,13 +26,21 @@ git pull
 
 Most of the old nodes have gone away, replaced with a single node that combines image preview with single- or multi-pick chooser, 'restart from here', and the HUD.
 
-This dog has a basic workflow, using only regular nodes and the Unified Chooser. If you're going to try the node out, please start with this - if it doesn't work, nothing more complicated will! And it's much easier to narrow down problems on a simple workflow!
-![dog](docs/dog.png)
+|Here's part of a simple workflow|It's saved in this image|
+|-|-|
+|![workflow](docs/Screenshot.png)|![dog](docs/dog.png)
+
+This uses only regular nodes and the Unified Chooser. If you're going to try the node out, please start with this - if it doesn't work, nothing more complicated will! And it's much easier to narrow down problems on a simple workflow!
+
+|Here's a workflow that illustrates use with both images and latents|Saved in this dog|
+|-|-|
+|![workflow](docs/Screenshot%20both.png)|![dog](docs/both.png)
 
 ## Notes...
 
 This is part of that workflow
-![workflow](docs/Screenshot.png)
+
+
 
 There is just one node now, the `Preview Chooser`. It has one widget control, mode - this just determines how the node behaves when there is only a single image.
 
