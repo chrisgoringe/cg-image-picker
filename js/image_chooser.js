@@ -3,7 +3,7 @@ import { api } from "../../../scripts/api.js";
 
 import { restart_from_here } from "./image_chooser_prompt.js";
 import { hud, FlowState } from "./image_chooser_hud.js";
-import { send_cancel, send_message } from "./image_chooser_messaging.js";
+import { send_cancel, send_message, send_onstart, skip_next_restart_message } from "./image_chooser_messaging.js";
 import { display_preview_images, additionalDrawBackground, click_is_in_image } from "./image_chooser_preview.js";
 
 function progressButtonPressed() {
@@ -12,7 +12,8 @@ function progressButtonPressed() {
         send_message(node.widgets[0].value, [...node.selected]); 
     }
     if (node && FlowState.idle() && node?.selected?.size>0) {
-        restart_from_here(node.id).then(() => {send_message(node.widgets[0].value, [...node.selected])});
+        skip_next_restart_message();
+        restart_from_here(node.id).then(() => { send_message(node.widgets[0].value, [...node.selected]); });
     }
 }
 
@@ -39,6 +40,7 @@ app.registerExtension({
             display_preview_images(event);
         }
         api.addEventListener("early-image-handler", earlyImageHandler);
+        api.addEventListener("execution_start", send_onstart);
     },
 
     async nodeCreated(node) {

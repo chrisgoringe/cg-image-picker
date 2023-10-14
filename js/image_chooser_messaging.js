@@ -17,4 +17,14 @@ function send_cancel() {
     api.interrupt();
 }
 
-export { send_message_from_pausing_node, send_cancel, send_message }
+var skip_next = 0;
+function skip_next_restart_message() { skip_next += 1; }
+function send_onstart() {
+    if (skip_next>0) {
+        skip_next -= 1;
+    } else {
+        send_message(-1,'__start__');
+    }
+}
+
+export { send_message_from_pausing_node, send_cancel, send_message, send_onstart, skip_next_restart_message }

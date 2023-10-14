@@ -21,6 +21,8 @@ class MessageHolder:
     def addMessage(cls, id, message):
         if message=='__cancel__':
             cls._addCancel()
+        elif message=='__start__':
+            cls.messages = {}
         else:
             cls.messages[str(id)] = message
     
