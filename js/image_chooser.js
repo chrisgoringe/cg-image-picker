@@ -94,10 +94,10 @@ app.registerExtension({
                 if (update) update.apply(this,arguments);
                 if (this.send_button_widget) {
                     this.send_button_widget.node_id = this.id;
-                    if (FlowState.paused_here(this.id) && this.selected?.size>0) {
-                        this.send_button_widget.name = (this.selected?.size>1) ? "Progress selected images" : "Progress selected image";
-                    } else if (FlowState.idle() && this.selected?.size>0) {
-                        this.send_button_widget.name = (this.selected?.size>1) ? "Progress selected images as restart" : "Progress selected image as restart";
+                    if (FlowState.paused_here(this.id) && this.selected && this.selected.size>0) {
+                        this.send_button_widget.name = (this.selected.size>1) ? "Progress selected images" : "Progress selected image";
+                    } else if (FlowState.idle() && this.selected && this.selected.size>0) {
+                        this.send_button_widget.name = (this.selected.size>1) ? "Progress selected images as restart" : "Progress selected image as restart";
                     } else {
                         this.send_button_widget.name = "";
                     }
