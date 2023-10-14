@@ -20,31 +20,35 @@ class PreviewAndChoose(PreviewImage):
             "optional": {"images": ("IMAGE", ), "latents": ("LATENT", ), },
             "hidden": {"prompt": "PROMPT", "extra_pnginfo": "EXTRA_PNGINFO"},
         }
-
-    def __init__(self):
-        self.stashed = {}
-        super().__init__()
+    
+    stash = {}
 
     def IS_CHANGED(self, **kwargs):
         return float('nan')
 
     def func(self, **kwargs):
+        id = kwargs.pop("id")
+        if id not in self.stash:
+            self.stash[id] = {}
+        my_stash = self.stash[id]
+
         # enable stashing. If images is None, we are operating in read-from-stash mode
         if 'images' in kwargs:
-            self.stashed['images']  = kwargs['images']
-            self.stashed['latents'] = kwargs['latents'] if 'latents' in kwargs else None
+            my_stash['images']  = kwargs['images']
+            my_stash['latents'] = kwargs['latents'] if 'latents' in kwargs else None
         else:
-            kwargs['images']  = self.stashed['images'] if 'images' in self.stashed else None
-            kwargs['latents'] = self.stashed['latents'] if 'latents' in self.stashed else None
-            if (kwargs['images'] is None):
-                return (None, None,)
+            kwargs['images']  = my_stash['images'] if 'images' in my_stash else None
+            kwargs['latents'] = my_stash['latents'] if 'latents' in my_stash else None
+            
+        if (kwargs['images'] is None):
+            return (None, None,)
 
         # extract from inputs
         latent_in         = kwargs.pop("latents", None)
         latent_samples_in = latent_in['samples'] if latent_in and 'samples' in latent_in else None
         images_in         = kwargs['images']
         batch             = images_in.shape[0]
-        id                = kwargs.pop("id")
+        
         mode              = kwargs.pop("mode")
 
         # call PreviewImage base
