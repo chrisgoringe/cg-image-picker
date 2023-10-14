@@ -6,6 +6,7 @@ class Cancelled(Exception):
     pass
 
 class MessageHolder:
+    stash = {}
     messages = {}
     lastCancel = time.monotonic()
 
@@ -23,6 +24,7 @@ class MessageHolder:
             cls._addCancel()
         elif message=='__start__':
             cls.messages = {}
+            cls.stash = {}
         else:
             cls.messages[str(id)] = message
     

@@ -20,17 +20,15 @@ class PreviewAndChoose(PreviewImage):
             "optional": {"images": ("IMAGE", ), "latents": ("LATENT", ), },
             "hidden": {"prompt": "PROMPT", "extra_pnginfo": "EXTRA_PNGINFO"},
         }
-    
-    stash = {}
 
     def IS_CHANGED(self, **kwargs):
         return float('nan')
 
     def func(self, **kwargs):
         id = kwargs.pop("id")
-        if id not in self.stash:
-            self.stash[id] = {}
-        my_stash = self.stash[id]
+        if id not in MessageHolder.stash:
+            MessageHolder.stash[id] = {}
+        my_stash = MessageHolder.stash[id]
 
         # enable stashing. If images is None, we are operating in read-from-stash mode
         if 'images' in kwargs:
