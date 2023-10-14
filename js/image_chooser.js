@@ -6,14 +6,17 @@ import { hud, FlowState } from "./image_chooser_hud.js";
 import { send_cancel, send_message } from "./image_chooser_messaging.js";
 import { display_preview_images, additionalDrawBackground, click_is_in_image } from "./image_chooser_preview.js";
 
-function buttonPressed() {
-    if (FlowState.paused_here(this.node.id) && this.node?.selected?.size>0) {
-        send_message(this.node.widgets[0].value, [...this.node.selected]); 
+function progressButtonPressed() {
+    const node = app.graph._nodes_by_id[this.node_id];
+    if (node && FlowState.paused_here(node.id) && node?.selected?.size>0) {
+        send_message(node.widgets[0].value, [...node.selected]); 
     }
-    if (FlowState.idle() && this.node?.selected?.size>0) {
-        restart_from_here(this.node.id).then(() => {send_message(this.node.widgets[0].value, [...this.node.selected])});
+    if (node && FlowState.idle() && node?.selected?.size>0) {
+        restart_from_here(node.id).then(() => {send_message(node.widgets[0].value, [...node.selected])});
     }
 }
+
+function cancelButtonPressed() { if (FlowState.running()) { send_cancel(); } }
 
 app.registerExtension({
 	name: "cg.custom.image_chooser",
@@ -21,24 +24,15 @@ app.registerExtension({
         const draw = LGraphCanvas.prototype.draw;
         LGraphCanvas.prototype.draw = function() {
             if (hud.update()) {
-                app.graph._nodes.forEach((node)=> {
-                    if (node.send_button_widget) { node.send_button_widget.updateLabel(); }
-                })
+                app.graph._nodes.forEach((node)=> { if (node.update) { node.update(); } })
             }
             draw.apply(this,arguments);
         }
 
-        const original_getCanvasMenuOptions = LGraphCanvas.prototype.getCanvasMenuOptions;
-        LGraphCanvas.prototype.getCanvasMenuOptions = function () {
-            const options = original_getCanvasMenuOptions.apply(this, arguments);
-            if (FlowState.running()) {
-                options.push(null); // divider
-                options.push({
-                    content: `Cancel current run`,
-                    callback: () => { send_cancel(); }
-                });
-            }
-            return options;
+        const original_api_interrupt = api.interrupt;
+        api.interrupt = function () {
+            if (FlowState.paused()) send_cancel();
+            original_api_interrupt.apply(this, arguments);
         }
 
         function earlyImageHandler(event) {
@@ -69,27 +63,10 @@ app.registerExtension({
                 return (org_onMouseDown && org_onMouseDown.apply(this, arguments));
             }
 
-            /*
-            node.buttonPressed = function() {
-                if (FlowState.paused_here(this.node.id) && this.node?.selected?.size>0) {
-                    send_message(this.node.widgets[0].value, [...this.node.selected]); 
-                } else if (FlowState.idle() && this.node?.selected?.size>0) {
-                    restart_from_here(this.node.id).then(() => {send_message(this.node.widgets[0].value, [...this.node.selected])});
-                } 
-            }*/
+            /* The buttons */
+            node.cancel_button_widget = node.addWidget("button", "", "", cancelButtonPressed);
+            node.send_button_widget = node.addWidget("button", "", "", progressButtonPressed);
 
-            /* The button */
-            node.send_button_widget = node.addWidget("button", "", "", buttonPressed)
-            node.send_button_widget.node = node;
-            node.send_button_widget.updateLabel = function () {
-                if (FlowState.paused_here(this.node.id) && this.node?.selected?.size>0) {
-                    this.name = (this.node?.selected?.size>1) ? "Progress selected images" : "Progress selected image";
-                } else if (FlowState.idle() && this.node?.selected?.size>0) {
-                    this.name = (this.node?.selected?.size>1) ? "Progress selected images as restart" : "Progress selected image as restart";
-                } else {
-                    this.name = "";
-                }
-            }
         }
     },
     async beforeRegisterNodeDef(nodeType, nodeData, app) {
@@ -106,7 +83,24 @@ app.registerExtension({
             nodeType.prototype.imageClicked = function (imageIndex) {
                 if (this.selected.has(imageIndex)) this.selected.delete(imageIndex);
                 else this.selected.add(imageIndex);
-                this.send_button_widget.updateLabel();
+                this.update();
+            }
+
+            /* Update the node when the flow state changes - change button labels */
+            const update = nodeType.prototype.update;
+            nodeType.prototype.update = function() {
+                if (update) update.apply(this,arguments);
+                if (this.send_button_widget) {
+                    this.send_button_widget.node_id = this.id;
+                    if (FlowState.paused_here(this.id) && this.selected?.size>0) {
+                        this.send_button_widget.name = (this.selected?.size>1) ? "Progress selected images" : "Progress selected image";
+                    } else if (FlowState.idle() && this.selected?.size>0) {
+                        this.send_button_widget.name = (this.selected?.size>1) ? "Progress selected images as restart" : "Progress selected image as restart";
+                    } else {
+                        this.send_button_widget.name = "";
+                    }
+                }
+                if (this.cancel_button_widget) this.cancel_button_widget.name = FlowState.running() ? "Cancel current run" : "";
                 this.setDirtyCanvas(true,true); 
             }
         }
