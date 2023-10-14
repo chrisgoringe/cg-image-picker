@@ -4,27 +4,7 @@ A node to allow you to preview images and choose one or more to pass on to the r
 
 (shameless plug for my other work - want to make your workflow cleaner - check out [UE Nodes](https://github.com/chrisgoringe/cg-use-everywhere). And leave a star if you like something!)
 
-## To install
-
-Find it in Comfy Manager. Or:
-
-```
-cd [path to ComfyUI]/custom_nodes
-git clone https://github.com/chrisgoringe/cg-image-picker.git
-```
-
-## To update
-
-Comfy Manager. Or:
-
-```
-cd [path to ComfyUI]/custom_nodes/cg-image-picker
-git pull
-```
-
-# Update 2.5.2
-
-Most of the old nodes have gone away, replaced with a single node that combines image preview with single- or multi-pick chooser, 'restart from here', and the HUD.
+## Basic usage
 
 |Here's part of a simple workflow|It's saved in this image|
 |-|-|
@@ -35,6 +15,18 @@ This uses only regular nodes and the Unified Chooser. If you're going to try the
 |Here's a workflow that illustrates use with both images and latents|Saved in this dog|
 |-|-|
 |![workflow](docs/Screenshot%20both.png)|![dog](docs/both.png)
+
+## Recent changes
+
+2.5.1 - 2.5.3 (13-14 Oct 2023)
+- added a cancel button
+- fixed the cancel in the main menu
+- removed some possible causes of incompatibility with other custom nodes.
+- click on images to select them
+- eliminate the right-click menu
+
+2.5 (13 Oct 2023)
+- Major update to unify the chooser and preview nodes
 
 ## Notes...
 
@@ -55,6 +47,24 @@ But the way ComfyUI works is that all the widget values get sent to the server a
 The exception is the chooser nodes themselves. They communicate directly with the server when you press 'go'. So their values when you started the run (which were sent to the server) are ignored in favour of the ones sent when you pressed 'go' to continue the workflow. 
 
 But you *can* change widgets and then do a `Progress... (as restart)`
+
+## To install
+
+Find it in Comfy Manager. Or:
+
+```
+cd [path to ComfyUI]/custom_nodes
+git clone https://github.com/chrisgoringe/cg-image-picker.git
+```
+
+## To update
+
+Comfy Manager. Or:
+
+```
+cd [path to ComfyUI]/custom_nodes/cg-image-picker
+git pull
+```
 
 ## Fabric node?
 
