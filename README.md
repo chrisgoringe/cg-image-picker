@@ -19,7 +19,7 @@ This uses only regular nodes and the Unified Chooser. If you're going to try the
 ## Recent changes
 
 2.6 (17 Oct 2023)
-- added the Preview Chooser Fabric
+- added the [Preview Chooser Fabric](#preview-chooser-fabric)
 - fixed some bugs with cancelling
 
 2.5.1 - 2.5.3 (13-14 Oct 2023)
