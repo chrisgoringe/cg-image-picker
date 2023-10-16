@@ -9,11 +9,11 @@ import { display_preview_images, additionalDrawBackground, click_is_in_image } f
 function progressButtonPressed() {
     const node = app.graph._nodes_by_id[this.node_id];
     if (node && FlowState.paused_here(node.id) && node?.selected?.size>0) {
-        send_message(node.widgets[0].value, [...node.selected]); 
+        send_message(node.id, [...node.selected]); 
     }
     if (node && FlowState.idle() && node?.selected?.size>0) {
         skip_next_restart_message();
-        restart_from_here(node.id).then(() => { send_message(node.widgets[0].value, [...node.selected]); });
+        restart_from_here(node.id).then(() => { send_message(node.id, [...node.selected]); });
     }
 }
 
@@ -81,10 +81,25 @@ app.registerExtension({
             node.send_button_widget = node.addWidget("button", "", "", progressButtonPressed);
             enable_disabling(node.cancel_button_widget)
             enable_disabling(node.send_button_widget)
+
+            /* clean up saves from previous versions */
+            const onAfterGraphConfigured = node.onAfterGraphConfigured;
+            node.onAfterGraphConfigured = function () {
+                onAfterGraphConfigured?.apply(this, arguments);
+                if (parseInt(this.widgets_values[0])) { // we have an id hanging around...
+                    this.widgets_values.splice(0,1).push('');
+                    this.widgets[0].value = node.widgets[1].value;
+                    this.widgets[1].value = '';
+                }
+            }
         }
     },
     async beforeRegisterNodeDef(nodeType, nodeData, app) {
         if (nodeType?.comfyClass==="Preview Chooser") {
+            const onNodeCreated = nodeType.prototype.onNodeCreated;
+            nodeType.prototype.onNodeCreated = function() {
+                onNodeCreated?.apply(this, arguments);
+            }
 
             /* Code to draw the boxes around selected images */
             const onDrawBackground = nodeType.prototype.onDrawBackground;

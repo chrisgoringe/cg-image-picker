@@ -1,7 +1,7 @@
 import { api } from "../../../scripts/api.js";
 
 function send_message_from_pausing_node(message) {
-    const id = app.graph._nodes_by_id[app.runningNodeId.toString()].widgets[0].value;
+    const id = app.runningNodeId;
     send_message(id, message);
 }
 

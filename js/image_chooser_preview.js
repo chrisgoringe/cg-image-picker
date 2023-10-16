@@ -1,11 +1,7 @@
 import { app } from "../../../scripts/app.js";
 
 function display_preview_images(event) {
-    const node = app.graph._nodes.find((node)=>{
-        const match = node?.widgets?.find((w)=>{return  (w?.name==='id' && w?._value===event.detail.id);})
-        if (match) return true;
-        return false;
-    });
+    const node = app.graph._nodes_by_id[event.detail.id];
     if (node) {
         node.selected = new Set();
         showImages(node, event.detail.urls);

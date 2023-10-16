@@ -13,12 +13,12 @@ class PreviewAndChoose(PreviewImage):
     def INPUT_TYPES(s):
         return {
             "required": {
-                "id" : ("LABEL", {"value":"__random__", "hidden":True}), 
+                #"id" : ("LABEL", {"value":"__random__", "hidden":True}), 
                 "mode" : (["Always pause", "Only pause if batch"],{}), 
                 
             },
             "optional": {"images": ("IMAGE", ), "latents": ("LATENT", ), },
-            "hidden": {"prompt": "PROMPT", "extra_pnginfo": "EXTRA_PNGINFO"},
+            "hidden": {"prompt": "PROMPT", "extra_pnginfo": "EXTRA_PNGINFO", "id":"UNIQUE_ID"},
         }
 
     def IS_CHANGED(self, **kwargs):
