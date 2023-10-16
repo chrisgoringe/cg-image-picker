@@ -4,6 +4,7 @@ function display_preview_images(event) {
     const node = app.graph._nodes_by_id[event.detail.id];
     if (node) {
         node.selected = new Set();
+        node.anti_selected = new Set();
         showImages(node, event.detail.urls);
     } else {
         console.log(`Image Chooser Preview - failed to find ${event.detail.id}`)
@@ -21,20 +22,24 @@ function showImages(node, urls) {
     node.setSizeForImage?.();
 }
 
+function drawRect(node, s, ctx) {
+    const padding = 8;
+    var rect;
+    if (node.imageRects) {
+        rect = node.imageRects[s];
+    } else {
+        const y = node.imagey;
+        rect = [padding,y+padding,node.size[0]-2*padding,node.size[1]-y-2*padding];
+    }
+    ctx.strokeRect(rect[0]+padding, rect[1]+padding, rect[2]-padding*2, rect[3]-padding*2);
+}
+
 function additionalDrawBackground(node, ctx) {
-    node?.selected?.forEach((s) => {
-        const padding = 8;
-        var rect;
-        if (node.imageRects) {
-            rect = node.imageRects[s];
-        } else {
-            const y = node.imagey;
-            rect = [padding,y+padding,node.size[0]-2*padding,node.size[1]-y-2*padding];
-        }
-        ctx.strokeStyle = "#8F8";
-        ctx.lineWidth = 1;
-        ctx.strokeRect(rect[0]+padding, rect[1]+padding, rect[2]-padding*2, rect[3]-padding*2);
-    })
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = "#8F8";
+    node?.selected?.forEach((s) => { drawRect(node,s, ctx) })
+    ctx.strokeStyle = "#F88";
+    node?.anti_selected?.forEach((s) => { drawRect(node,s, ctx) })
 }
 
 function click_is_in_image(node, pos) {

@@ -1,0 +1,1380 @@
+{
+  "last_node_id": 47,
+  "last_link_id": 55,
+  "nodes": [
+    {
+      "id": 9,
+      "type": "EmptyLatentImage",
+      "pos": [
+        19.547092234515002,
+        494.7604198016991
+      ],
+      "size": {
+        "0": 247.5659942626953,
+        "1": 106
+      },
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            9
+          ],
+          "shape": 3,
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "EmptyLatentImage"
+      },
+      "widgets_values": [
+        512,
+        512,
+        6
+      ]
+    },
+    {
+      "id": 7,
+      "type": "VAEDecode",
+      "pos": [
+        615.6380426879804,
+        489.8188046793864
+      ],
+      "size": {
+        "0": 140,
+        "1": 46
+      },
+      "flags": {},
+      "order": 14,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 27
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            34
+          ],
+          "shape": 3,
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VAEDecode"
+      }
+    },
+    {
+      "id": 33,
+      "type": "UpscaleModelLoader",
+      "pos": [
+        3096.2523037527226,
+        1321.0307028891646
+      ],
+      "size": {
+        "0": 249.46266174316406,
+        "1": 59.71754837036133
+      },
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "outputs": [
+        {
+          "name": "UPSCALE_MODEL",
+          "type": "UPSCALE_MODEL",
+          "links": [
+            39
+          ],
+          "shape": 3,
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "UpscaleModelLoader"
+      },
+      "widgets_values": [
+        "4xBox.pth"
+      ]
+    },
+    {
+      "id": 1,
+      "type": "CheckpointLoaderSimple",
+      "pos": [
+        31.31619192524282,
+        1464.3430662231763
+      ],
+      "size": {
+        "0": 315,
+        "1": 98
+      },
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "outputs": [
+        {
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": [
+            1
+          ],
+          "shape": 3,
+          "slot_index": 0
+        },
+        {
+          "name": "CLIP",
+          "type": "CLIP",
+          "links": [
+            2
+          ],
+          "shape": 3,
+          "slot_index": 1
+        },
+        {
+          "name": "VAE",
+          "type": "VAE",
+          "links": [
+            3
+          ],
+          "shape": 3,
+          "slot_index": 2
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "CheckpointLoaderSimple"
+      },
+      "widgets_values": [
+        "icbinpICantBelieveIts_seco.safetensors"
+      ]
+    },
+    {
+      "id": 2,
+      "type": "Anything Everywhere3",
+      "pos": [
+        367.3161919252433,
+        1465.3430662231763
+      ],
+      "size": {
+        "0": 182.5864715576172,
+        "1": 66
+      },
+      "flags": {},
+      "order": 10,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "MODEL",
+          "type": "*",
+          "link": 1,
+          "color_on": "#B39DDB"
+        },
+        {
+          "name": "CLIP",
+          "type": "*",
+          "link": 2,
+          "color_on": "#FFD500"
+        },
+        {
+          "name": "VAE",
+          "type": "*",
+          "link": 3,
+          "color_on": "#FF6E6E"
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "Anything Everywhere3",
+        "group_restricted": false
+      }
+    },
+    {
+      "id": 10,
+      "type": "EmptyLatentImage",
+      "pos": [
+        1155.3370491015626,
+        683.6630729687499
+      ],
+      "size": {
+        "0": 247.5659942626953,
+        "1": 106
+      },
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            10
+          ],
+          "shape": 3,
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "EmptyLatentImage"
+      },
+      "widgets_values": [
+        512,
+        512,
+        2
+      ]
+    },
+    {
+      "id": 31,
+      "type": "Anything Everywhere",
+      "pos": [
+        1752.3370491015626,
+        689.6630729687499
+      ],
+      "size": {
+        "0": 210,
+        "1": 26
+      },
+      "flags": {},
+      "order": 25,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "LATENT",
+          "type": "*",
+          "link": 37,
+          "color_on": "#FF9CF9"
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "Anything Everywhere",
+        "group_restricted": true
+      }
+    },
+    {
+      "id": 15,
+      "type": "VAEDecode",
+      "pos": [
+        1183.3370491015626,
+        1038.66307296875
+      ],
+      "size": {
+        "0": 140,
+        "1": 46
+      },
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": null
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            50
+          ],
+          "shape": 3,
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VAEDecode"
+      }
+    },
+    {
+      "id": 42,
+      "type": "EmptyLatentImage",
+      "pos": [
+        2125.727969531249,
+        942.0696900390622
+      ],
+      "size": {
+        "0": 247.5659942626953,
+        "1": 106
+      },
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            46
+          ],
+          "shape": 3,
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "EmptyLatentImage"
+      },
+      "widgets_values": [
+        512,
+        512,
+        2
+      ]
+    },
+    {
+      "id": 44,
+      "type": "Anything Everywhere",
+      "pos": [
+        2743.727969531249,
+        945.0696900390622
+      ],
+      "size": {
+        "0": 210,
+        "1": 26
+      },
+      "flags": {},
+      "order": 24,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "LATENT",
+          "type": "*",
+          "link": 49,
+          "color_on": "#FF9CF9"
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "Anything Everywhere",
+        "group_restricted": true
+      }
+    },
+    {
+      "id": 39,
+      "type": "LatentBatch",
+      "pos": [
+        2160.727969531249,
+        1098.0696900390626
+      ],
+      "size": {
+        "0": 210,
+        "1": 46
+      },
+      "flags": {},
+      "order": 15,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "latent1",
+          "type": "LATENT",
+          "link": null
+        },
+        {
+          "name": "latent2",
+          "type": "LATENT",
+          "link": 51
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            47
+          ],
+          "shape": 3,
+          "slot_index": 0
+        }
+      ],
+      "title": "Positive",
+      "properties": {
+        "Node name for S&R": "LatentBatch"
+      }
+    },
+    {
+      "id": 28,
+      "type": "Anything Everywhere?",
+      "pos": [
+        872.6380426879804,
+        507.8188046793864
+      ],
+      "size": {
+        "0": 210,
+        "1": 82
+      },
+      "flags": {},
+      "order": 21,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "LATENT",
+          "type": "*",
+          "link": 31,
+          "color_on": "#FF9CF9"
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "Anything Everywhere?",
+        "group_restricted": false
+      },
+      "widgets_values": [
+        "Pos",
+        "latent1"
+      ]
+    },
+    {
+      "id": 29,
+      "type": "Anything Everywhere?",
+      "pos": [
+        870.6380426879804,
+        648.8188046793864
+      ],
+      "size": {
+        "0": 210,
+        "1": 82
+      },
+      "flags": {},
+      "order": 22,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "LATENT",
+          "type": "*",
+          "link": 32,
+          "color_on": "#FF9CF9"
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "Anything Everywhere?",
+        "group_restricted": false
+      },
+      "widgets_values": [
+        "Neg",
+        "latent1"
+      ]
+    },
+    {
+      "id": 40,
+      "type": "LatentBatch",
+      "pos": [
+        2160,
+        1193
+      ],
+      "size": {
+        "0": 210,
+        "1": 46
+      },
+      "flags": {},
+      "order": 16,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "latent1",
+          "type": "LATENT",
+          "link": null
+        },
+        {
+          "name": "latent2",
+          "type": "LATENT",
+          "link": 52
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            48
+          ],
+          "shape": 3,
+          "slot_index": 0
+        }
+      ],
+      "title": "Negative",
+      "properties": {
+        "Node name for S&R": "LatentBatch"
+      }
+    },
+    {
+      "id": 43,
+      "type": "VAEDecode",
+      "pos": [
+        2168.727969531249,
+        1293.0696900390624
+      ],
+      "size": {
+        "0": 140,
+        "1": 46
+      },
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": null
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            53
+          ],
+          "shape": 3,
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VAEDecode"
+      }
+    },
+    {
+      "id": 47,
+      "type": "Preview Chooser",
+      "pos": [
+        2167,
+        1426
+      ],
+      "size": {
+        "0": 787.3004760742188,
+        "1": 407.1717834472656
+      },
+      "flags": {},
+      "order": 12,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 53
+        },
+        {
+          "name": "latents",
+          "type": "LATENT",
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "links": [
+            55
+          ],
+          "shape": 3,
+          "slot_index": 0
+        },
+        {
+          "name": "latent",
+          "type": "LATENT",
+          "links": null,
+          "shape": 3
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "Preview Chooser"
+      },
+      "widgets_values": [
+        "Always pause",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": 35,
+      "type": "PreviewImage",
+      "pos": [
+        3375,
+        1314
+      ],
+      "size": {
+        "0": 655.970947265625,
+        "1": 754.6182250976562
+      },
+      "flags": {},
+      "order": 20,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 40
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "PreviewImage"
+      }
+    },
+    {
+      "id": 8,
+      "type": "KSamplerFABRIC",
+      "pos": [
+        1420.3370491015626,
+        689.6630729687499
+      ],
+      "size": {
+        "0": 311.7792053222656,
+        "1": 394
+      },
+      "flags": {},
+      "order": 23,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": null
+        },
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "link": null
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "link": null
+        },
+        {
+          "name": "latent_image",
+          "type": "LATENT",
+          "link": 10
+        },
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": null
+        },
+        {
+          "name": "pos_latents",
+          "type": "LATENT",
+          "link": 43
+        },
+        {
+          "name": "neg_latents",
+          "type": "LATENT",
+          "link": 44
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            37
+          ],
+          "shape": 3,
+          "slot_index": 0
+        }
+      ],
+      "title": "Stage Two",
+      "properties": {
+        "Node name for S&R": "KSamplerFABRIC"
+      },
+      "widgets_values": [
+        447753991956278,
+        "randomize",
+        20,
+        8,
+        "euler",
+        "normal",
+        1,
+        0.5,
+        0.4,
+        0.8
+      ]
+    },
+    {
+      "id": 41,
+      "type": "KSamplerFABRIC",
+      "pos": [
+        2406.727969531249,
+        945.0696900390622
+      ],
+      "size": {
+        "0": 311.7792053222656,
+        "1": 394
+      },
+      "flags": {},
+      "order": 19,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": null
+        },
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "link": null
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "link": null
+        },
+        {
+          "name": "latent_image",
+          "type": "LATENT",
+          "link": 46
+        },
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": null
+        },
+        {
+          "name": "pos_latents",
+          "type": "LATENT",
+          "link": 47
+        },
+        {
+          "name": "neg_latents",
+          "type": "LATENT",
+          "link": 48
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            49
+          ],
+          "shape": 3,
+          "slot_index": 0
+        }
+      ],
+      "title": "Stage Two",
+      "properties": {
+        "Node name for S&R": "KSamplerFABRIC"
+      },
+      "widgets_values": [
+        606726779604237,
+        "randomize",
+        20,
+        8,
+        "euler",
+        "normal",
+        1,
+        0.4,
+        0.4,
+        0.8
+      ]
+    },
+    {
+      "id": 34,
+      "type": "ImageUpscaleWithModel",
+      "pos": [
+        3102,
+        1451
+      ],
+      "size": {
+        "0": 241.79998779296875,
+        "1": 46
+      },
+      "flags": {},
+      "order": 17,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "upscale_model",
+          "type": "UPSCALE_MODEL",
+          "link": 39
+        },
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 55
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            40
+          ],
+          "shape": 3,
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "ImageUpscaleWithModel"
+      }
+    },
+    {
+      "id": 36,
+      "type": "CLIPTextEncode",
+      "pos": [
+        34.31619192524281,
+        1606.3430662231756
+      ],
+      "size": {
+        "0": 303.9349670410156,
+        "1": 117.73921203613281
+      },
+      "flags": {},
+      "order": 7,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "links": [
+            41
+          ],
+          "shape": 3,
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "CLIPTextEncode"
+      },
+      "widgets_values": [
+        "universe in a bottle, fantasy landscape, dragon"
+      ]
+    },
+    {
+      "id": 37,
+      "type": "CLIPTextEncode",
+      "pos": [
+        36.65502664843751,
+        1760.8691051718738
+      ],
+      "size": {
+        "0": 310.4539489746094,
+        "1": 138.59771728515625
+      },
+      "flags": {},
+      "order": 8,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "links": [
+            42
+          ],
+          "shape": 3,
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "CLIPTextEncode"
+      },
+      "widgets_values": [
+        ""
+      ]
+    },
+    {
+      "id": 4,
+      "type": "Prompts Everywhere",
+      "pos": [
+        378,
+        1690
+      ],
+      "size": {
+        "0": 161.00946044921875,
+        "1": 46
+      },
+      "flags": {},
+      "order": 13,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "*",
+          "link": 41,
+          "color_on": "#FFA931"
+        },
+        {
+          "name": "CONDITIONING",
+          "type": "*",
+          "link": 42,
+          "color_on": "#FFA931"
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "Prompts Everywhere",
+        "group_restricted": false
+      }
+    },
+    {
+      "id": 5,
+      "type": "KSampler",
+      "pos": [
+        284.5470922345146,
+        489.7604198016991
+      ],
+      "size": {
+        "0": 315,
+        "1": 262
+      },
+      "flags": {},
+      "order": 9,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": null
+        },
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "link": null
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "link": null
+        },
+        {
+          "name": "latent_image",
+          "type": "LATENT",
+          "link": 9
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            27,
+            33
+          ],
+          "shape": 3,
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "KSampler"
+      },
+      "widgets_values": [
+        553403391374759,
+        "randomize",
+        20,
+        8,
+        "dpmpp_3m_sde_gpu",
+        "karras",
+        1
+      ]
+    },
+    {
+      "id": 38,
+      "type": "Preview Chooser Fabric",
+      "pos": [
+        1178,
+        1142
+      ],
+      "size": {
+        "0": 804.5029296875,
+        "1": 401.73480224609375
+      },
+      "flags": {},
+      "order": 11,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 50
+        },
+        {
+          "name": "latents",
+          "type": "LATENT",
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "positive",
+          "type": "LATENT",
+          "links": [
+            51
+          ],
+          "shape": 3,
+          "slot_index": 0
+        },
+        {
+          "name": "negative",
+          "type": "LATENT",
+          "links": [
+            52
+          ],
+          "shape": 3,
+          "slot_index": 1
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "Preview Chooser Fabric"
+      },
+      "widgets_values": [
+        "",
+        ""
+      ]
+    },
+    {
+      "id": 6,
+      "type": "Preview Chooser Fabric",
+      "pos": [
+        29,
+        790
+      ],
+      "size": {
+        "0": 1066.1322021484375,
+        "1": 546.0099487304688
+      },
+      "flags": {},
+      "order": 18,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 34
+        },
+        {
+          "name": "latents",
+          "type": "LATENT",
+          "link": 33
+        }
+      ],
+      "outputs": [
+        {
+          "name": "positive",
+          "type": "LATENT",
+          "links": [
+            31,
+            43
+          ],
+          "shape": 3,
+          "slot_index": 0
+        },
+        {
+          "name": "negative",
+          "type": "LATENT",
+          "links": [
+            32,
+            44
+          ],
+          "shape": 3,
+          "slot_index": 1
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "Preview Chooser Fabric"
+      },
+      "widgets_values": [
+        "",
+        ""
+      ]
+    }
+  ],
+  "links": [
+    [
+      1,
+      1,
+      0,
+      2,
+      0,
+      "*"
+    ],
+    [
+      2,
+      1,
+      1,
+      2,
+      1,
+      "*"
+    ],
+    [
+      3,
+      1,
+      2,
+      2,
+      2,
+      "*"
+    ],
+    [
+      9,
+      9,
+      0,
+      5,
+      3,
+      "LATENT"
+    ],
+    [
+      10,
+      10,
+      0,
+      8,
+      3,
+      "LATENT"
+    ],
+    [
+      27,
+      5,
+      0,
+      7,
+      0,
+      "LATENT"
+    ],
+    [
+      31,
+      6,
+      0,
+      28,
+      0,
+      "*"
+    ],
+    [
+      32,
+      6,
+      1,
+      29,
+      0,
+      "*"
+    ],
+    [
+      33,
+      5,
+      0,
+      6,
+      1,
+      "LATENT"
+    ],
+    [
+      34,
+      7,
+      0,
+      6,
+      0,
+      "IMAGE"
+    ],
+    [
+      37,
+      8,
+      0,
+      31,
+      0,
+      "*"
+    ],
+    [
+      39,
+      33,
+      0,
+      34,
+      0,
+      "UPSCALE_MODEL"
+    ],
+    [
+      40,
+      34,
+      0,
+      35,
+      0,
+      "IMAGE"
+    ],
+    [
+      41,
+      36,
+      0,
+      4,
+      0,
+      "*"
+    ],
+    [
+      42,
+      37,
+      0,
+      4,
+      1,
+      "*"
+    ],
+    [
+      43,
+      6,
+      0,
+      8,
+      5,
+      "LATENT"
+    ],
+    [
+      44,
+      6,
+      1,
+      8,
+      6,
+      "LATENT"
+    ],
+    [
+      46,
+      42,
+      0,
+      41,
+      3,
+      "LATENT"
+    ],
+    [
+      47,
+      39,
+      0,
+      41,
+      5,
+      "LATENT"
+    ],
+    [
+      48,
+      40,
+      0,
+      41,
+      6,
+      "LATENT"
+    ],
+    [
+      49,
+      41,
+      0,
+      44,
+      0,
+      "*"
+    ],
+    [
+      50,
+      15,
+      0,
+      38,
+      0,
+      "IMAGE"
+    ],
+    [
+      51,
+      38,
+      0,
+      39,
+      1,
+      "LATENT"
+    ],
+    [
+      52,
+      38,
+      1,
+      40,
+      1,
+      "LATENT"
+    ],
+    [
+      53,
+      43,
+      0,
+      47,
+      0,
+      "IMAGE"
+    ],
+    [
+      55,
+      47,
+      0,
+      34,
+      1,
+      "IMAGE"
+    ]
+  ],
+  "groups": [
+    {
+      "title": "Fabric",
+      "bounding": [
+        1142,
+        624,
+        871,
+        949
+      ],
+      "color": "#3f789e",
+      "font_size": 24
+    },
+    {
+      "title": "Initial Generation",
+      "bounding": [
+        7,
+        415,
+        1111,
+        941
+      ],
+      "color": "#3f789e",
+      "font_size": 24
+    },
+    {
+      "title": "Group",
+      "bounding": [
+        10,
+        1385,
+        569,
+        516
+      ],
+      "color": "#3f789e",
+      "font_size": 24
+    },
+    {
+      "title": "Group",
+      "bounding": [
+        3082,
+        1239,
+        983,
+        825
+      ],
+      "color": "#3f789e",
+      "font_size": 24
+    },
+    {
+      "title": "Group",
+      "bounding": [
+        2105,
+        856,
+        902,
+        1019
+      ],
+      "color": "#3f789e",
+      "font_size": 24
+    }
+  ],
+  "config": {},
+  "extra": {},
+  "version": 0.4
+}

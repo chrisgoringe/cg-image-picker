@@ -8,12 +8,14 @@ import { display_preview_images, additionalDrawBackground, click_is_in_image } f
 
 function progressButtonPressed() {
     const node = app.graph._nodes_by_id[this.node_id];
-    if (node && FlowState.paused_here(node.id) && node?.selected?.size>0) {
-        send_message(node.id, [...node.selected]); 
-    }
-    if (node && FlowState.idle() && node?.selected?.size>0) {
-        skip_next_restart_message();
-        restart_from_here(node.id).then(() => { send_message(node.id, [...node.selected]); });
+    if (this.name!='') {
+        if (FlowState.paused()) {
+            send_message(node.id, [...node.selected, -1, ...node.anti_selected]); 
+        }
+        if (FlowState.idle()) {
+            skip_next_restart_message();
+            restart_from_here(node.id).then(() => { send_message(node.id, [...node.selected, -1, ...node.anti_selected]); });
+        }
     }
 }
 
@@ -43,7 +45,7 @@ app.registerExtension({
 
         const original_api_interrupt = api.interrupt;
         api.interrupt = function () {
-            if (FlowState.paused()) send_cancel();
+            if (FlowState.paused() && !FlowState.cancelling) send_cancel();
             original_api_interrupt.apply(this, arguments);
         }
 
@@ -55,7 +57,7 @@ app.registerExtension({
     },
 
     async nodeCreated(node) {
-        if (node?.comfyClass === "Preview Chooser") {
+        if (node?.comfyClass === "Preview Chooser" || node?.comfyClass === "Preview Chooser Fabric") {
             /* Don't allow imageIndex to be set - this stops images jumping to the front when clicked */
             Object.defineProperty(node, 'imageIndex', {
                 get : function() { return null; },
@@ -95,11 +97,11 @@ app.registerExtension({
         }
     },
     async beforeRegisterNodeDef(nodeType, nodeData, app) {
-        if (nodeType?.comfyClass==="Preview Chooser") {
-            const onNodeCreated = nodeType.prototype.onNodeCreated;
-            nodeType.prototype.onNodeCreated = function() {
-                onNodeCreated?.apply(this, arguments);
-            }
+        if (nodeType?.comfyClass==="Preview Chooser" || nodeType?.comfyClass === "Preview Chooser Fabric") {
+            //const onNodeCreated = nodeType.prototype.onNodeCreated;
+            //nodeType.prototype.onNodeCreated = function() {
+            //    onNodeCreated?.apply(this, arguments);
+            //}
 
             /* Code to draw the boxes around selected images */
             const onDrawBackground = nodeType.prototype.onDrawBackground;
@@ -110,8 +112,19 @@ app.registerExtension({
 
             /* Code to handle clicks on images */
             nodeType.prototype.imageClicked = function (imageIndex) {
-                if (this.selected.has(imageIndex)) this.selected.delete(imageIndex);
-                else this.selected.add(imageIndex);
+                if (nodeType?.comfyClass==="Preview Chooser") {
+                    if (this.selected.has(imageIndex)) this.selected.delete(imageIndex);
+                    else this.selected.add(imageIndex);
+                } else {
+                    if (this.selected.has(imageIndex)) {
+                        this.selected.delete(imageIndex);
+                        this.anti_selected.add(imageIndex);
+                    } else if (this.anti_selected.has(imageIndex)) {
+                        this.anti_selected.delete(imageIndex);
+                    } else {
+                        this.selected.add(imageIndex);
+                    }
+                }
                 this.update();
             }
 
@@ -121,10 +134,15 @@ app.registerExtension({
                 if (update) update.apply(this,arguments);
                 if (this.send_button_widget) {
                     this.send_button_widget.node_id = this.id;
-                    if (FlowState.paused_here(this.id) && this.selected && this.selected.size>0) {
-                        this.send_button_widget.name = (this.selected.size>1) ? "Progress selected images" : "Progress selected image";
-                    } else if (FlowState.idle() && this.selected && this.selected.size>0) {
-                        this.send_button_widget.name = (this.selected.size>1) ? "Progress selected images as restart" : "Progress selected image as restart";
+                    const selection = ( this.selected ? this.selected.size : 0 ) + ( this.anti_selected ? this.anti_selected.size : 0 )
+                    if (FlowState.paused_here(this.id) && selection>0) {
+                        this.send_button_widget.name = (selection>1) ? "Progress selected images" : "Progress selected image";
+                    } else if (FlowState.idle() && selection>0) {
+                        this.send_button_widget.name = (selection>1) ? "Progress selected images as restart" : "Progress selected image as restart";
+                    } else if (FlowState.paused_here(this.id) && selection==0 && nodeType?.comfyClass === "Preview Chooser Fabric") {
+                        this.send_button_widget.name = "Progress with nothing selected";
+                    } else if (FlowState.idle() && selection==0 && nodeType?.comfyClass === "Preview Chooser Fabric") {
+                        this.send_button_widget.name = "Progress with nothing selected as restart";
                     } else {
                         this.send_button_widget.name = "";
                     }

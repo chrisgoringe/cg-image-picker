@@ -18,6 +18,10 @@ This uses only regular nodes and the Unified Chooser. If you're going to try the
 
 ## Recent changes
 
+2.6 (17 Oct 2023)
+- added the Preview Chooser Fabric
+- fixed some bugs with cancelling
+
 2.5.1 - 2.5.3 (13-14 Oct 2023)
 - added a cancel button
 - fixed the cancel in the main menu
@@ -48,6 +52,20 @@ The exception is the chooser nodes themselves. They communicate directly with th
 
 But you *can* change widgets and then do a `Progress... (as restart)`
 
+## Preview Chooser Fabric
+
+This node is designed for use with the [Fabric custom nodes](https://github.com/ssitu/ComfyUI_fabric), which allow you to pass latents you like and dislike from one iteration into a sampler which uses that information as a conditioning.
+
+This node outputs two sets of latents, positive and negative. Click an image to add it to positive (green box), click again to add to negative (red box), again to clear.
+
+Note that you *must* select at least one positive and one negative in the first round. At present you must also select at least one positive and one negative in subsequent rounds, but there's a [PR](https://github.com/ssitu/ComfyUI_fabric/pull/12) on the Fabric nodes that will allow one of positive or negative to be empty - so this *is* permitted by the chooser.
+
+|Here's an example [workflow](docs/fabric-workflow.json). Note that you will need Use Everywhere Nodes to load this workflow - you can find them in the manager or install from [here](https://github.com/chrisgoringe/cg-use-everywhere)|An image with the workflow in|
+|-|-|
+|![workflow](docs/fabric-screen.png)|![dragon](docs/fabric.png)|
+
+Note that restarting doesn't work very well (because of the dependance of the downstream nodes on all of the latents from previous choosers). It's ok, but not great.
+
 ## To install
 
 Find it in Comfy Manager. Or:
@@ -66,14 +84,7 @@ cd [path to ComfyUI]/custom_nodes/cg-image-picker
 git pull
 ```
 
-## Fabric node?
 
-The node built for Fabric (which produces +ve and -ve outputs) is currently on hold (it will come back soon!) - if you really need it, please revert to commit 9505f3ce99b40375121eeaaccf43f1153a032304. The version in this build *might* work but is entirely untested.
-
-```
-cd cg-image-picker
-git checkout 9505f3ce99b40375121eeaaccf43f1153a032304
-```
 
 ## Issues? Comments? Delight?
 

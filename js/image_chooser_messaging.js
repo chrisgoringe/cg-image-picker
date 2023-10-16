@@ -1,4 +1,5 @@
 import { api } from "../../../scripts/api.js";
+import { FlowState } from "./image_chooser_hud.js";
 
 function send_message_from_pausing_node(message) {
     const id = app.runningNodeId;
@@ -14,7 +15,9 @@ function send_message(id, message) {
 
 function send_cancel() {
     send_message(-1,'__cancel__');
+    FlowState.cancelling = true;
     api.interrupt();
+    FlowState.cancelling = false;
 }
 
 var skip_next = 0;
