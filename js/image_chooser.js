@@ -19,6 +19,17 @@ function progressButtonPressed() {
 
 function cancelButtonPressed() { if (FlowState.running()) { send_cancel(); } }
 
+/*
+Comfy uses 'clicked' to make the button flash; so just disable that.
+This *doesn't* stop the callback, it's totally cosmetic!
+*/
+function enable_disabling(button) {
+    Object.defineProperty(button, 'clicked', {
+        get : function() { return this._clicked; },
+        set : function(v) { this._clicked = (v && this.name!=''); }
+    })
+}
+
 app.registerExtension({
 	name: "cg.custom.image_chooser",
     setup() {
@@ -68,7 +79,8 @@ app.registerExtension({
             /* The buttons */
             node.cancel_button_widget = node.addWidget("button", "", "", cancelButtonPressed);
             node.send_button_widget = node.addWidget("button", "", "", progressButtonPressed);
-
+            enable_disabling(node.cancel_button_widget)
+            enable_disabling(node.send_button_widget)
         }
     },
     async beforeRegisterNodeDef(nodeType, nodeData, app) {
