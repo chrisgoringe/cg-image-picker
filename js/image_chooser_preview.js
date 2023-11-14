@@ -23,7 +23,7 @@ function showImages(node, urls) {
 }
 
 function drawRect(node, s, ctx) {
-    const padding = 8;
+    const padding = 1;
     var rect;
     if (node.imageRects) {
         rect = node.imageRects[s];
@@ -35,6 +35,30 @@ function drawRect(node, s, ctx) {
 }
 
 function additionalDrawBackground(node, ctx) {
+    if (!node.imgs) return;
+    for (let i = 0; i < node.imgs.length; i++) {
+        // delete underlying image
+        ctx.fillStyle = "#000";
+        ctx.fillRect(...node.imageRects[i])
+        // draw the new one
+        const img = node.imgs[i];
+        const cellWidth = node.imageRects[i][2];
+        const cellHeight = node.imageRects[i][3];
+        
+        let wratio = cellWidth/img.width;
+        let hratio = cellHeight/img.height;
+        var ratio = Math.min(wratio, hratio);
+
+        let imgHeight = ratio * img.height;
+        let imgWidth = ratio * img.width;
+
+        const imgX = node.imageRects[i][0] + (cellWidth - imgWidth)/2;
+        const imgY = node.imageRects[i][1] + (cellHeight - imgHeight)/2;
+        const cell_padding = 2;
+
+        ctx.drawImage(img, imgX+cell_padding, imgY+cell_padding, imgWidth-cell_padding*2, imgHeight-cell_padding*2);
+
+    }
     ctx.lineWidth = 2;
     ctx.strokeStyle = "#8F8";
     node?.selected?.forEach((s) => { drawRect(node,s, ctx) })
