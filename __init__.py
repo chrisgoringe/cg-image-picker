@@ -13,7 +13,7 @@ NODE_CLASS_MAPPINGS = {
 
 __all__ = ['NODE_CLASS_MAPPINGS']
 
-IP_VERSION = "2.6.1"
+IP_VERSION = "2.6.2"
 CLEAN = False
 
 application_root_directory = os.path.dirname(folder_paths.__file__)
