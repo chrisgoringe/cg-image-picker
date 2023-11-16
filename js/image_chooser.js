@@ -84,7 +84,7 @@ app.registerExtension({
             enable_disabling(node.cancel_button_widget)
             enable_disabling(node.send_button_widget)
 
-            /* clean up saves from previous versions */
+            /* clean up saves from previous versions 
             const onAfterGraphConfigured = node.onAfterGraphConfigured;
             node.onAfterGraphConfigured = function () {
                 onAfterGraphConfigured?.apply(this, arguments);
@@ -93,7 +93,7 @@ app.registerExtension({
                     this.widgets[0].value = node.widgets[1].value;
                     this.widgets[1].value = '';
                 }
-            }
+            }*/
         }
     },
     async beforeRegisterNodeDef(nodeType, nodeData, app) {
