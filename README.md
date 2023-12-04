@@ -18,6 +18,11 @@ This uses only regular nodes and the Unified Chooser. If you're going to try the
 
 ## Recent changes
 
+2.7 (4 Dec 2023)
+- various minor fixes
+- use new JS deployment 
+- add setting to control position of the HUD
+
 2.6 (17 Oct 2023)
 - added the [Preview Chooser Fabric](#preview-chooser-fabric)
 - fixed some bugs with cancelling
@@ -41,6 +46,8 @@ Once the run finishes you can `Progress... (as restart)` to send one or more ima
 You should always have the image input connected; if you have the latent input connected, the same latents are output as images (in the same order - which is actually the order in which you selected them). I *very strongly* suggest that you always pass the latents through the `Preview Chooser` - the order of node execution, and the ability to restart, are much more reliable if you do.
 
 As you can see from the workflow, it is possible now to have multiple choosers, and to mix and match image and latent choosers.
+
+You can control the position of the HUD (in the top left) using the main settings menu.
 
 ## No, you can't change other widgets while it's waiting (but you can restart)
 

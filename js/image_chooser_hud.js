@@ -24,6 +24,11 @@ class HUD {
         this.current_node_is_chooser = false;
     }
 
+    move(newtop) {
+        this.hud.style.top = `${newtop}px`;
+        this.hud.style.opacity = newtop>=0 ? 0.8 : 0;
+    }
+
     update() {
         if (app.runningNodeId==this.current_node_id) return false;
 

@@ -54,6 +54,19 @@ app.registerExtension({
         }
         api.addEventListener("early-image-handler", earlyImageHandler);
         api.addEventListener("execution_start", send_onstart);
+
+        app.ui.settings.addSetting({
+            id: "ImageChooser.hudpos",
+            name: "Image Chooser HUD position (-1 for off)",
+            type: "slider",
+			attrs: {
+				min: -1,
+				max: 500,
+				step: 1,
+			},
+            defaultValue: 10,
+            onChange: (newVal, oldVal) => { hud.move(newVal); }
+        });
     },
 
     async nodeCreated(node) {

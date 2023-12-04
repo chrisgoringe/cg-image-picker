@@ -1,3 +1,10 @@
+"""
+@author: chrisgoringe
+@title: Image Chooser
+@nickname: Image Chooser
+@description: Custom nodes that preview images and pause the workflow to allow the user to select one or more to progress
+"""
+
 import sys, os, shutil
 import folder_paths
 
@@ -14,7 +21,7 @@ NODE_CLASS_MAPPINGS = {
 WEB_DIRECTORY = "./js"
 __all__ = ["NODE_CLASS_MAPPINGS", "WEB_DIRECTORY"]
 
-IP_VERSION = "2.6.3"
+IP_VERSION = "2.7"
 
 # remove old javascript installs
 application_root_directory = os.path.dirname(folder_paths.__file__)
