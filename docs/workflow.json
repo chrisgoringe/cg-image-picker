@@ -54,42 +54,37 @@
       ]
     },
     {
-      "id": 12,
-      "type": "CLIPTextEncode",
+      "id": 3,
+      "type": "EmptyLatentImage",
       "pos": [
-        478,
-        234
+        485,
+        354
       ],
       "size": {
-        "0": 222.54319763183594,
-        "1": 76
+        "0": 210,
+        "1": 106
       },
       "flags": {},
-      "order": 3,
+      "order": 1,
       "mode": 0,
-      "inputs": [
-        {
-          "name": "clip",
-          "type": "CLIP",
-          "link": 15
-        }
-      ],
       "outputs": [
         {
-          "name": "CONDITIONING",
-          "type": "CONDITIONING",
+          "name": "LATENT",
+          "type": "LATENT",
           "links": [
-            17
+            2
           ],
           "shape": 3,
           "slot_index": 0
         }
       ],
       "properties": {
-        "Node name for S&R": "CLIPTextEncode"
+        "Node name for S&R": "EmptyLatentImage"
       },
       "widgets_values": [
-        "person"
+        512,
+        512,
+        4
       ]
     },
     {
@@ -132,37 +127,42 @@
       ]
     },
     {
-      "id": 3,
-      "type": "EmptyLatentImage",
+      "id": 12,
+      "type": "CLIPTextEncode",
       "pos": [
-        485,
-        354
+        478,
+        234
       ],
       "size": {
-        "0": 210,
-        "1": 106
+        "0": 222.54319763183594,
+        "1": 76
       },
       "flags": {},
-      "order": 1,
+      "order": 3,
       "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 15
+        }
+      ],
       "outputs": [
         {
-          "name": "LATENT",
-          "type": "LATENT",
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
           "links": [
-            2
+            17
           ],
           "shape": 3,
           "slot_index": 0
         }
       ],
       "properties": {
-        "Node name for S&R": "EmptyLatentImage"
+        "Node name for S&R": "CLIPTextEncode"
       },
       "widgets_values": [
-        512,
-        512,
-        4
+        "person"
       ]
     },
     {
@@ -263,6 +263,43 @@
       ]
     },
     {
+      "id": 11,
+      "type": "Reroute",
+      "pos": [
+        883,
+        484
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 18
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "VAE",
+          "links": [
+            13,
+            28
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
       "id": 7,
       "type": "VAEDecode",
       "pos": [
@@ -304,41 +341,60 @@
       }
     },
     {
-      "id": 11,
-      "type": "Reroute",
+      "id": 15,
+      "type": "Preview Chooser",
       "pos": [
-        883,
-        484
+        1365,
+        37
       ],
       "size": [
-        75,
-        26
+        315,
+        338
       ],
       "flags": {},
-      "order": 6,
+      "order": 8,
       "mode": 0,
       "inputs": [
         {
-          "name": "",
-          "type": "*",
-          "link": 18
+          "name": "images",
+          "type": "IMAGE",
+          "link": 23
+        },
+        {
+          "name": "latents",
+          "type": "LATENT",
+          "link": 25
         }
       ],
       "outputs": [
         {
-          "name": "",
-          "type": "VAE",
+          "name": "images",
+          "type": "IMAGE",
           "links": [
-            13,
-            28
+            30
           ],
+          "shape": 3,
           "slot_index": 0
+        },
+        {
+          "name": "latent",
+          "type": "LATENT",
+          "links": [
+            27,
+            31
+          ],
+          "shape": 3,
+          "slot_index": 1
         }
       ],
       "properties": {
-        "showOutputText": false,
-        "horizontal": false
-      }
+        "Node name for S&R": "Preview Chooser"
+      },
+      "widgets_values": [
+        "Always pause",
+        "Always pause",
+        ""
+      ]
     },
     {
       "id": 17,
@@ -382,29 +438,29 @@
       }
     },
     {
-      "id": 15,
+      "id": 18,
       "type": "Preview Chooser",
       "pos": [
-        1367,
-        37
+        1739,
+        38
       ],
-      "size": {
-        "0": 315,
-        "1": 126
-      },
+      "size": [
+        315,
+        338
+      ],
       "flags": {},
-      "order": 8,
+      "order": 10,
       "mode": 0,
       "inputs": [
         {
           "name": "images",
           "type": "IMAGE",
-          "link": 23
+          "link": 30
         },
         {
           "name": "latents",
           "type": "LATENT",
-          "link": 25
+          "link": 31
         }
       ],
       "outputs": [
@@ -412,7 +468,7 @@
           "name": "images",
           "type": "IMAGE",
           "links": [
-            30
+            32
           ],
           "shape": 3,
           "slot_index": 0
@@ -420,10 +476,7 @@
         {
           "name": "latent",
           "type": "LATENT",
-          "links": [
-            27,
-            31
-          ],
+          "links": [],
           "shape": 3,
           "slot_index": 1
         }
@@ -432,7 +485,7 @@
         "Node name for S&R": "Preview Chooser"
       },
       "widgets_values": [
-        9677076,
+        "Always pause",
         "Always pause",
         ""
       ]
@@ -486,59 +539,6 @@
       "properties": {
         "Node name for S&R": "PreviewImage"
       }
-    },
-    {
-      "id": 18,
-      "type": "Preview Chooser",
-      "pos": [
-        1739,
-        38
-      ],
-      "size": {
-        "0": 315,
-        "1": 126
-      },
-      "flags": {},
-      "order": 10,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "images",
-          "type": "IMAGE",
-          "link": 30
-        },
-        {
-          "name": "latents",
-          "type": "LATENT",
-          "link": 31
-        }
-      ],
-      "outputs": [
-        {
-          "name": "images",
-          "type": "IMAGE",
-          "links": [
-            32
-          ],
-          "shape": 3,
-          "slot_index": 0
-        },
-        {
-          "name": "latent",
-          "type": "LATENT",
-          "links": [],
-          "shape": 3,
-          "slot_index": 1
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "Preview Chooser"
-      },
-      "widgets_values": [
-        812561,
-        "Always pause",
-        ""
-      ]
     }
   ],
   "links": [
