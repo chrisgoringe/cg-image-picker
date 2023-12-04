@@ -1,5 +1,4 @@
-import { $el } from "../../../scripts/ui.js";
-import { send_cancel } from "./image_chooser_messaging.js";
+import { $el } from "../../scripts/ui.js";
 
 class HUD {
     constructor() {

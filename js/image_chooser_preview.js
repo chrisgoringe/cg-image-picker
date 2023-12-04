@@ -1,4 +1,4 @@
-import { app } from "../../../scripts/app.js";
+import { app } from "../../scripts/app.js";
 
 function display_preview_images(event) {
     const node = app.graph._nodes_by_id[event.detail.id];

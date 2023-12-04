@@ -1,5 +1,5 @@
-import { app } from "../../../scripts/app.js";
-import { api } from "../../../scripts/api.js";
+import { app } from "../../scripts/app.js";
+import { api } from "../../scripts/api.js";
 
 import { restart_from_here } from "./image_chooser_prompt.js";
 import { hud, FlowState } from "./image_chooser_hud.js";
