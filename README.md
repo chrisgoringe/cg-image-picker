@@ -17,6 +17,8 @@ This uses only regular nodes and the Unified Chooser. If you're going to try the
 |![workflow](docs/Screenshot%20both.png)|![dog](docs/both.png)
 
 ## Recent changes
+2.8 (6 Dec 2023)
+- added three new modes: pass through, take first n, take last n
 
 2.7 (4 Dec 2023)
 - various minor fixes
