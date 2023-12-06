@@ -61,7 +61,9 @@ class PreviewAndChoose(PreviewImage):
 
         # wait for selection
         try:
-            selections = MessageHolder.waitForMessage(id, asList=True) if (mode=="Always pause" or self.batch>1 and mode not in ["Pass through", "Take First n", "Take Last n"]) else [0]
+            is_block_condition = (mode == "Always pause" or self.batch > 1)
+            is_blocking_mode = (mode not in ["Pass through", "Take First n", "Take Last n"])
+            selections = MessageHolder.waitForMessage(id, asList=True) if (is_blocking_mode and is_block_condition) else [0]
         except Cancelled:
             return (None, None,)
         
