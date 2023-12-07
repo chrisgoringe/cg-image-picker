@@ -1,5 +1,7 @@
 # Image Chooser
 
+Love this node? [Buy me a coffee!](https://www.buymeacoffee.com/chrisgoringe)
+
 A node to allow you to preview images and choose one or more to pass on to the rest of your workflow (as image or latent). 
 
 (shameless plug for my other work - want to make your workflow cleaner - check out [UE Nodes](https://github.com/chrisgoringe/cg-use-everywhere). And leave a star if you like something!)
