@@ -26,7 +26,7 @@ class PreviewAndChoose(PreviewImage):
 
     def func(self, id, **kwargs):
         # mode doesn't exist in subclass
-        self.count = int(kwargs.pop('count', 1)[0])
+        self.count = int(kwargs.pop('count', [1,])[0])
         mode = kwargs.pop('mode',["Always pause",])[0]
         id = id[0]
         if id not in MessageHolder.stash:
@@ -105,7 +105,7 @@ class PreviewAndChooseDouble(PreviewAndChoose):
             "hidden": {"prompt": "PROMPT", "extra_pnginfo": "EXTRA_PNGINFO", "id":"UNIQUE_ID"},
         } 
 
-    def batch_up_selections(self, images_in, latent_samples_in, selections:list):
+    def batch_up_selections(self, images_in, latent_samples_in, selections:list, mode):
         divider = selections.index(-1)
         latents_out_good = self.latent_bundle(latent_samples_in, selections[:divider])
         latents_out_bad = self.latent_bundle(latent_samples_in, selections[divider+1:])

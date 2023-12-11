@@ -2,7 +2,7 @@ import { $el } from "../../scripts/ui.js";
 
 class HUD {
     constructor() {
-        this.span = $el("span", { style: {}, textContent: "" });
+        this.span = $el("span", { style: { color:"white" }, textContent: "" });
         this.hud = $el("div", {
             style: { 
                 "position": "fixed", 
