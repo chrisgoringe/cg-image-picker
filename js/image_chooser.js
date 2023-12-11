@@ -97,16 +97,15 @@ app.registerExtension({
             enable_disabling(node.cancel_button_widget)
             enable_disabling(node.send_button_widget)
 
-            /* clean up saves from previous versions 
+            /* clean up saves from previous versions */
             const onAfterGraphConfigured = node.onAfterGraphConfigured;
             node.onAfterGraphConfigured = function () {
                 onAfterGraphConfigured?.apply(this, arguments);
-                if (parseInt(this.widgets_values[0])) { // we have an id hanging around...
-                    this.widgets_values.splice(0,1).push('');
-                    this.widgets[0].value = node.widgets[1].value;
-                    this.widgets[1].value = '';
+                if (!parseInt(this.widgets_values[1])) { // count isn't initialised
+                    this.widgets_values.splice(1,1).push(1);
+                    this.widgets[1].value = 1;
                 }
-            }*/
+            }
         }
     },
     async beforeRegisterNodeDef(nodeType, nodeData, app) {
