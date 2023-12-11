@@ -21,7 +21,7 @@ NODE_CLASS_MAPPINGS = {
 WEB_DIRECTORY = "./js"
 __all__ = ["NODE_CLASS_MAPPINGS", "WEB_DIRECTORY"]
 
-IP_VERSION = "2.7"
+IP_VERSION = "2.7.1"
 
 # remove old javascript installs
 application_root_directory = os.path.dirname(folder_paths.__file__)
