@@ -74,7 +74,7 @@ app.registerExtension({
             /* Don't allow imageIndex to be set - this stops images jumping to the front when clicked */
             Object.defineProperty(node, 'imageIndex', {
                 get : function() { return null; },
-                set : function( v ) { }
+                set : function( v ) { node.overIndex = v; }
             })
             /* A property defining the top of the image when there is just one */
             Object.defineProperty(node, 'imagey', {
