@@ -1,5 +1,4 @@
 import { $el } from "../../scripts/ui.js";
-import { app } from "../../scripts/app.js";
 
 class HUD {
     constructor() {
@@ -40,10 +39,6 @@ class HUD {
             this.current_node_is_chooser = (this.class_of_current_node === "Preview Chooser Fabric" || 
                                             this.class_of_current_node === "Preview Chooser");
             this.span.textContent = `${FlowState.state()} in ${this.class_of_current_node} (${this.current_node_id}) `;
-            if (this.current_node_is_chooser && app.ui.settings.getSettingValue('ImageChooser.alert', true)) {
-                const audio = new Audio('extensions/cg-image-picker/ding.mp3');
-                audio.play();
-            }
         } else {
             this.class_of_current_node = undefined;
             this.current_node_is_chooser = false;

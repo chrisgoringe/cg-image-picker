@@ -70,8 +70,10 @@ app.registerExtension({
             original_api_interrupt.apply(this, arguments);
         }
 
+        const audio = new Audio('extensions/cg-image-picker/ding.mp3');
         function earlyImageHandler(event) {
             display_preview_images(event);
+            audio.play();
         }
         api.addEventListener("early-image-handler", earlyImageHandler);
         api.addEventListener("execution_start", send_onstart);
