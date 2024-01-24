@@ -22,6 +22,7 @@ This uses only regular nodes and the Unified Chooser. If you're going to try the
 
 2.8.2 (24 Jan 2024)
 - hotkeys
+- alert sound
 
 2.8 (6 Dec 2023)
 - added three new modes: pass through, take first n, take last n
@@ -63,6 +64,10 @@ The following hotkeys are active *only when the flow is paused in a Preview Choo
 
 - `1...9` click image number `n`
 - `0` click `progress selected images` if any are selected, or `cancel current run` if none selected
+
+## Alert sound
+
+There's a ping when the chooser node is waiting. You can turn in off in the main settings menu, or change the sound by replacing the file `js/ding.mp3` with any 
 
 ## No, you can't change other widgets while it's waiting (but you can restart)
 

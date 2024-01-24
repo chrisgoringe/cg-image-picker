@@ -53,6 +53,7 @@ app.registerExtension({
 	name: "cg.custom.image_chooser",
     init() {
         window.addEventListener("keydown", keyListener, true);
+        window.addEventListener("beforeunload", send_cancel, true);
     },
     setup() {
         const draw = LGraphCanvas.prototype.draw;
@@ -90,6 +91,12 @@ app.registerExtension({
         app.ui.settings.addSetting({
             id: "ImageChooser.hotkeys",
             name: "Image Chooser: enable hotkeys",
+            type: "boolean",
+            defaultValue: true,
+        });
+        app.ui.settings.addSetting({
+            id: "ImageChooser.alert",
+            name: "Image Chooser: enable alert",
             type: "boolean",
             defaultValue: true,
         });
