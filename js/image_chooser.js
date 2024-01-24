@@ -32,8 +32,28 @@ function enable_disabling(button) {
     })
 }
 
+/*
+Called when a key is pressed
+*/
+function keyListener(event) {
+    if (!app.ui.settings.getSettingValue('ImageChooser.hotkeys', true)) return;
+    if (!FlowState.paused()) return;
+    const node = app.graph._nodes_by_id[app.runningNodeId];
+    if (event.key==="0") {
+        if (node.selected && node.selected.size>0) send_message(node.id, [...node.selected, -1, ...node.anti_selected]); 
+        else send_cancel();
+    }
+    if ("123456789".includes(event.key)) {
+        const idx = parseInt(event.key)-1;
+        if (node.imgs && node.imgs.length > idx) node.imageClicked(idx);
+    }
+}
+
 app.registerExtension({
 	name: "cg.custom.image_chooser",
+    init() {
+        window.addEventListener("keydown", keyListener, true);
+    },
     setup() {
         const draw = LGraphCanvas.prototype.draw;
         LGraphCanvas.prototype.draw = function() {
@@ -66,6 +86,12 @@ app.registerExtension({
 			},
             defaultValue: 10,
             onChange: (newVal, oldVal) => { hud.move(newVal); }
+        });
+        app.ui.settings.addSetting({
+            id: "ImageChooser.hotkeys",
+            name: "Image Chooser: enable hotkeys",
+            type: "boolean",
+            defaultValue: true,
         });
     },
 
