@@ -19,6 +19,10 @@ This uses only regular nodes and the Unified Chooser. If you're going to try the
 |![workflow](docs/Screenshot%20both.png)|![dog](docs/both.png)
 
 ## Recent changes
+
+2.8.2 (24 Jan 2024)
+- hotkeys
+
 2.8 (6 Dec 2023)
 - added three new modes: pass through, take first n, take last n
 
@@ -52,6 +56,13 @@ You should always have the image input connected; if you have the latent input c
 As you can see from the workflow, it is possible now to have multiple choosers, and to mix and match image and latent choosers.
 
 You can control the position of the HUD (in the top left) using the main settings menu.
+
+## Hotkeys
+
+The following hotkeys are active *only when the flow is paused in a Preview Chooser node.
+
+- `1...9` click image number `n`
+- `0` click `progress selected images` if any are selected, or `cancel current run` if none selected
 
 ## No, you can't change other widgets while it's waiting (but you can restart)
 
