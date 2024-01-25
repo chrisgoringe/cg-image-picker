@@ -20,6 +20,10 @@ This uses only regular nodes and the Unified Chooser. If you're going to try the
 
 ## Recent changes
 
+2.9 (25 Jan 2024)
+- added `Progress first pick`
+- fixed a few bugs
+
 2.8.2 (24 Jan 2024)
 - hotkeys
 - alert sound
