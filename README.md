@@ -67,7 +67,18 @@ The following hotkeys are active *only when the flow is paused in a Preview Choo
 
 ## Alert sound
 
-There's a ping when the chooser node is waiting. You can turn in off in the main settings menu, or change the sound by replacing the file `js/ding.mp3` with any 
+There's a ping when the chooser node is waiting. You can turn in off in the main settings menu, or change the sound by replacing the file `js/ding.mp3` with any audio.
+
+## Modes
+
+- `Always pause` - default behaviour. Always wait for a selection
+- `Only pause if batch`. Wait unless there is just one image, in which case pass it through immediately.
+- `Progress first pick`. Always pause, but when an image is selected pass it through (no need to select and then click 'progress').
+- `Pass through`. Just pass everything through. Same as bypassing the node.
+- `Take First n`. Pass the first `n` images
+- `Take Last n`. Pass the last `n` images
+
+The last three are only really for some fairly special cases!
 
 ## No, you can't change other widgets while it's waiting (but you can restart)
 
