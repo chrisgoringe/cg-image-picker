@@ -162,6 +162,7 @@ app.registerExtension({
                 if (nodeType?.comfyClass==="Preview Chooser") {
                     if (this.selected.has(imageIndex)) this.selected.delete(imageIndex);
                     else this.selected.add(imageIndex);
+                    if (this.widgets[0]?.value==="Progress first pick") send_message(this.id, [...this.selected, -1, ...this.anti_selected]); 
                 } else {
                     if (this.selected.has(imageIndex)) {
                         this.selected.delete(imageIndex);

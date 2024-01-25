@@ -14,7 +14,7 @@ class PreviewAndChoose(PreviewImage):
     def INPUT_TYPES(s):
         return {
             "required": {
-                "mode" : (["Always pause", "Only pause if batch", "Pass through", "Take First n", "Take Last n"],{}),
+                "mode" : (["Always pause", "Only pause if batch", "Progress first pick", "Pass through", "Take First n", "Take Last n"],{}),
 				"count": ("INT", { "default": 1, "min": 1, "max": 999, "step": 1 }),
             },
             "optional": {"images": ("IMAGE", ), "latents": ("LATENT", ), },
@@ -61,7 +61,7 @@ class PreviewAndChoose(PreviewImage):
 
         # wait for selection
         try:
-            is_block_condition = (mode == "Always pause" or self.batch > 1)
+            is_block_condition = (mode == "Always pause" or mode == "Progress first pick" or self.batch > 1)
             is_blocking_mode = (mode not in ["Pass through", "Take First n", "Take Last n"])
             selections = MessageHolder.waitForMessage(id, asList=True) if (is_blocking_mode and is_block_condition) else [0]
         except Cancelled:
