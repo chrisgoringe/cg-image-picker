@@ -56,6 +56,9 @@ app.registerExtension({
         window.addEventListener("beforeunload", send_cancel, true);
     },
     setup() {
+        /*
+        Whenever the canvas is redrawn, check if we need to update the HUD
+        */
         const draw = LGraphCanvas.prototype.draw;
         LGraphCanvas.prototype.draw = function() {
             if (hud.update()) {
@@ -64,19 +67,40 @@ app.registerExtension({
             draw.apply(this,arguments);
         }
 
+        /*
+        If a run is interrupted, send a cancel message (unless we're doing the cancelling, to avoid infinite loop)
+        */
         const original_api_interrupt = api.interrupt;
         api.interrupt = function () {
             if (FlowState.paused() && !FlowState.cancelling) send_cancel();
             original_api_interrupt.apply(this, arguments);
         }
 
+        /*
+        When we get images sent back for review...
+        */
         const audio = new Audio('extensions/cg-image-picker/ding.mp3');
         function earlyImageHandler(event) {
             display_preview_images(event);
-            audio.play();
+            if (app.ui.settings.getSettingValue("ImageChooser.alert")) audio.play();
         }
         api.addEventListener("early-image-handler", earlyImageHandler);
-        api.addEventListener("execution_start", send_onstart);
+
+        /*
+        At the start of execution
+        */
+        function on_execution_start() {
+            if (send_onstart()) {
+                app.graph._nodes.forEach((node)=> { 
+                    if (node.selected || node.anti_selected) { 
+                        node.selected.clear();
+                        node.anti_selected.clear();
+                        node.update(); 
+                    } 
+                })
+            } 
+        } 
+        api.addEventListener("execution_start", on_execution_start);
 
         app.ui.settings.addSetting({
             id: "ImageChooser.hudpos",
@@ -145,10 +169,6 @@ app.registerExtension({
     },
     async beforeRegisterNodeDef(nodeType, nodeData, app) {
         if (nodeType?.comfyClass==="Preview Chooser" || nodeType?.comfyClass === "Preview Chooser Fabric") {
-            //const onNodeCreated = nodeType.prototype.onNodeCreated;
-            //nodeType.prototype.onNodeCreated = function() {
-            //    onNodeCreated?.apply(this, arguments);
-            //}
 
             /* Code to draw the boxes around selected images */
             const onDrawBackground = nodeType.prototype.onDrawBackground;
