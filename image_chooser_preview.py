@@ -1,5 +1,6 @@
 from server import PromptServer
 from nodes import PreviewImage
+from comfy.model_management import InterruptProcessingException
 
 from .image_chooser_server import MessageHolder, Cancelled
 import torch
@@ -65,7 +66,8 @@ class PreviewAndChoose(PreviewImage):
             is_blocking_mode = (mode not in ["Pass through", "Take First n", "Take Last n"])
             selections = MessageHolder.waitForMessage(id, asList=True) if (is_blocking_mode and is_block_condition) else [0]
         except Cancelled:
-            return (None, None,)
+            raise InterruptProcessingException()
+            #return (None, None,)
         
         return self.batch_up_selections(images_in, latent_samples_in, selections, mode)
 
