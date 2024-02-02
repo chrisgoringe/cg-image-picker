@@ -8,20 +8,13 @@ class Cancelled(Exception):
 class MessageHolder:
     stash = {}
     messages = {}
-    lastCancel = time.monotonic()
-
-    @classmethod
-    def _addCancel(cls):
-        cls.lastCancel = time.monotonic()
-
-    @classmethod
-    def _recentCancel(cls, period=1.0):
-        return ((time.monotonic()-cls.lastCancel)<period)
+    cancelled = False
     
     @classmethod
     def addMessage(cls, id, message):
         if message=='__cancel__':
-            cls._addCancel()
+            cls.messages = {}
+            cls.cancelled = True
         elif message=='__start__':
             cls.messages = {}
             cls.stash = {}
@@ -32,10 +25,12 @@ class MessageHolder:
     def waitForMessage(cls, id, period = 0.1, asList = False):
         sid = str(id)
         while not (sid in cls.messages) and not ("-1" in cls.messages):
-            if cls._recentCancel():
+            if cls.cancelled:
+                cls.cancelled = False
                 raise Cancelled()
             time.sleep(period)
-        if cls._recentCancel():
+        if cls.cancelled:
+            cls.cancelled = False
             raise Cancelled()
         message = cls.messages.pop(str(id),None) or cls.messages.pop("-1")
         try:

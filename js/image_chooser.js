@@ -37,9 +37,7 @@ Called when a key is pressed
 */
 var ignore_key = false;
 function keyListener(event) {
-    if (ignore_key) return;
-    ignore_key = true;
-    setTimeout(()=>{ignore_key=false},2000);
+    if (event.repeat) return;
     if (!app.ui.settings.getSettingValue('ImageChooser.hotkeys', true)) return;
     if (!FlowState.paused()) return;
     const node = app.graph._nodes_by_id[app.runningNodeId];
