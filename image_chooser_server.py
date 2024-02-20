@@ -18,6 +18,7 @@ class MessageHolder:
         elif message=='__start__':
             cls.messages = {}
             cls.stash = {}
+            cls.cancelled = False
         else:
             cls.messages[str(id)] = message
     
