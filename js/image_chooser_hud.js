@@ -1,4 +1,5 @@
 import { $el } from "../../scripts/ui.js";
+import { app } from "../../scripts/app.js";
 
 class HUD {
     constructor() {

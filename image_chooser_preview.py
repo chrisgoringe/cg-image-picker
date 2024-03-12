@@ -37,6 +37,10 @@ class PreviewAndChoose(PreviewImage):
         if mode=="Repeat last selection":
             print("Here despite 'Repeat last selection' - treat as 'Always pause'")
             mode = "Always pause"
+        if mode=="Always pause":
+            # pretend it was Repeat last so that the prompt matches if that is selected next time.
+            # UGH
+            kwargs['prompt'][0][id[0]]['inputs']['mode'] = "Repeat last selection"
         id = id[0]
         if id not in MessageHolder.stash:
             MessageHolder.stash[id] = {}
