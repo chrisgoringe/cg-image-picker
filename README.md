@@ -20,6 +20,9 @@ This uses only regular nodes and the Unified Chooser. If you're going to try the
 
 ## Recent changes
 
+2.10 (12 March 2024)
+- added `Repeat last selection`
+
 2.9 (25 Jan 2024)
 - added `Progress first pick`
 - fixed a few bugs
@@ -76,6 +79,7 @@ There's a ping when the chooser node is waiting. You can turn in off in the main
 ## Modes
 
 - `Always pause` - default behaviour. Always wait for a selection
+- `Repeat last selection` - As long as nothing upstream has changed, immediately send the same output as previously. If anything has changed (including first run), treat as `Always pause`
 - `Only pause if batch`. Wait unless there is just one image, in which case pass it through immediately.
 - `Progress first pick`. Always pause, but when an image is selected pass it through (no need to select and then click 'progress').
 - `Pass through`. Just pass everything through. Same as bypassing the node.
@@ -92,7 +96,9 @@ But the way ComfyUI works is that all the widget values get sent to the server a
 
 The exception is the chooser nodes themselves. They communicate directly with the server when you press 'go'. So their values when you started the run (which were sent to the server) are ignored in favour of the ones sent when you pressed 'go' to continue the workflow. 
 
-But you *can* change widgets and then do a `Progress... (as restart)`
+But you *can* change widgets and then do a `Progress... (as restart)` 
+
+But you *can* use `Repeat last selection`
 
 ## Preview Chooser Fabric
 

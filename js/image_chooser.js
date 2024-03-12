@@ -32,6 +32,11 @@ function enable_disabling(button) {
     })
 }
 
+function disable_serialize(widget) {
+    if (!widget.options) widget.options = {  };
+    widget.options.serialize = false;
+}
+
 /*
 Called when a key is pressed
 */
@@ -155,8 +160,10 @@ app.registerExtension({
             /* The buttons */
             node.cancel_button_widget = node.addWidget("button", "", "", cancelButtonPressed);
             node.send_button_widget = node.addWidget("button", "", "", progressButtonPressed);
-            enable_disabling(node.cancel_button_widget)
-            enable_disabling(node.send_button_widget)
+            enable_disabling(node.cancel_button_widget);
+            enable_disabling(node.send_button_widget);
+            disable_serialize(node.cancel_button_widget);
+            disable_serialize(node.send_button_widget);
 
             /* clean up saves from previous versions */
             const onAfterGraphConfigured = node.onAfterGraphConfigured;

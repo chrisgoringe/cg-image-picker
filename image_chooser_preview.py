@@ -4,6 +4,7 @@ from comfy.model_management import InterruptProcessingException
 
 from .image_chooser_server import MessageHolder, Cancelled
 import torch
+import random
 
 class PreviewAndChoose(PreviewImage):
     RETURN_TYPES = ("IMAGE","LATENT",)
@@ -11,24 +12,31 @@ class PreviewAndChoose(PreviewImage):
     FUNCTION = "func"
     CATEGORY = "image_chooser"
     INPUT_IS_LIST=True
+    OUTPUT_NODE = False
+    last_ic = 0
     @classmethod
     def INPUT_TYPES(s):
         return {
             "required": {
-                "mode" : (["Always pause", "Only pause if batch", "Progress first pick", "Pass through", "Take First n", "Take Last n"],{}),
+                "mode" : (["Always pause", "Repeat last selection", "Only pause if batch", "Progress first pick", "Pass through", "Take First n", "Take Last n"],{}),
 				"count": ("INT", { "default": 1, "min": 1, "max": 999, "step": 1 }),
             },
             "optional": {"images": ("IMAGE", ), "latents": ("LATENT", ), },
             "hidden": {"prompt": "PROMPT", "extra_pnginfo": "EXTRA_PNGINFO", "id":"UNIQUE_ID"},
         }
 
-    def IS_CHANGED(self, **kwargs):
-        return float('nan')
+    @classmethod
+    def IS_CHANGED(cls, mode, **kwargs):
+        if (mode[0]!="Repeat last selection" or not cls.last_ic): cls.last_ic = random.random()
+        return cls.last_ic
 
     def func(self, id, **kwargs):
         # mode doesn't exist in subclass
         self.count = int(kwargs.pop('count', [1,])[0])
         mode = kwargs.pop('mode',["Always pause",])[0]
+        if mode=="Repeat last selection":
+            print("Here despite 'Repeat last selection' - treat as 'Always pause'")
+            mode = "Always pause"
         id = id[0]
         if id not in MessageHolder.stash:
             MessageHolder.stash[id] = {}
