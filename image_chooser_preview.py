@@ -13,7 +13,7 @@ class PreviewAndChoose(PreviewImage):
     CATEGORY = "image_chooser"
     INPUT_IS_LIST=True
     OUTPUT_NODE = False
-    last_ic = 0
+    last_ic = {}
     @classmethod
     def INPUT_TYPES(s):
         return {
@@ -26,9 +26,9 @@ class PreviewAndChoose(PreviewImage):
         }
 
     @classmethod
-    def IS_CHANGED(cls, mode, **kwargs):
-        if (mode[0]!="Repeat last selection" or not cls.last_ic): cls.last_ic = random.random()
-        return cls.last_ic
+    def IS_CHANGED(cls, mode, id, **kwargs):
+        if (mode[0]!="Repeat last selection" or not id[0] in cls.last_ic): cls.last_ic[id[0]] = random.random()
+        return cls.last_ic[id[0]]
 
     def func(self, id, **kwargs):
         # mode doesn't exist in subclass
