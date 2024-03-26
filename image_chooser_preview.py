@@ -98,12 +98,6 @@ class PreviewAndChoose(PreviewImage):
             return { "samples" : self.tensor_bundle(latent_samples_in, picks) }
         else:
             return None
-        
-    def mask_bundle(self, masks_in:torch.Tensor, picks):
-        if masks_in is not None:
-            return self.tensor_bundle(masks_in.unsqueeze(3), picks).squeeze(3)
-        else:
-            return None
     
     def batch_up_selections(self, images_in:torch.Tensor, latent_samples_in:torch.Tensor, masks_in:torch.Tensor, selections, mode):
         if (mode=="Pass through"):
