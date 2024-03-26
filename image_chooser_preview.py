@@ -7,8 +7,8 @@ import torch
 import random
 
 class PreviewAndChoose(PreviewImage):
-    RETURN_TYPES = ("IMAGE","LATENT",)
-    RETURN_NAMES = ("images","latent",)
+    RETURN_TYPES = ("IMAGE","LATENT","MASK")
+    RETURN_NAMES = ("images","latents","masks")
     FUNCTION = "func"
     CATEGORY = "image_chooser"
     INPUT_IS_LIST=True
@@ -21,7 +21,7 @@ class PreviewAndChoose(PreviewImage):
                 "mode" : (["Always pause", "Repeat last selection", "Only pause if batch", "Progress first pick", "Pass through", "Take First n", "Take Last n"],{}),
 				"count": ("INT", { "default": 1, "min": 1, "max": 999, "step": 1 }),
             },
-            "optional": {"images": ("IMAGE", ), "latents": ("LATENT", ), },
+            "optional": {"images": ("IMAGE", ), "latents": ("LATENT", ), "masks": ("MASK", ) },
             "hidden": {"prompt": "PROMPT", "extra_pnginfo": "EXTRA_PNGINFO", "id":"UNIQUE_ID"},
         }
 
@@ -50,16 +50,19 @@ class PreviewAndChoose(PreviewImage):
         if 'images' in kwargs:
             my_stash['images']  = kwargs['images']
             my_stash['latents'] = kwargs.get('latents', None)
+            my_stash['masks']   = kwargs.get('masks', None)
         else:
             kwargs['images']  = my_stash.get('images', None)
             kwargs['latents'] = my_stash.get('latents', None)
+            kwargs['masks']   = my_stash.get('masks', None)
             
         if (kwargs['images'] is None):
-            return (None, None,)
+            return (None, None, None,)
         
         # convert list to batch
         images_in         = torch.cat(kwargs.pop('images'))
         latents_in        = kwargs.pop('latents', None)
+        masks_in          = torch.cat(kwargs.pop('masks')) if kwargs.get('masks', None) is not None else None
         latent_samples_in = torch.cat(list(l['samples'] for l in latents_in)) if latents_in is not None else None
         self.batch        = images_in.shape[0]
 
@@ -81,10 +84,14 @@ class PreviewAndChoose(PreviewImage):
             raise InterruptProcessingException()
             #return (None, None,)
         
-        return self.batch_up_selections(images_in, latent_samples_in, selections, mode)
+        return self.batch_up_selections(images_in=images_in, latent_samples_in=latent_samples_in, masks_in=masks_in, selections=selections, mode=mode)
 
     def tensor_bundle(self, tensor_in:torch.Tensor, picks):
-        return torch.cat(tuple([tensor_in[(x)%self.batch].unsqueeze_(0) for x in picks])).reshape([-1]+list(tensor_in.shape[1:]))
+        if tensor_in is not None and len(picks):
+            batch = tensor_in.shape[0]
+            return torch.cat(tuple([tensor_in[(x)%batch].unsqueeze_(0) for x in picks])).reshape([-1]+list(tensor_in.shape[1:]))
+        else:
+            return None
     
     def latent_bundle(self, latent_samples_in:torch.Tensor, picks):
         if (latent_samples_in is not None and len(picks)):
@@ -92,19 +99,19 @@ class PreviewAndChoose(PreviewImage):
         else:
             return None
     
-    def batch_up_selections(self, images_in:torch.Tensor, latent_samples_in:torch.Tensor, selections, mode):
+    def batch_up_selections(self, images_in:torch.Tensor, latent_samples_in:torch.Tensor, masks_in:torch.Tensor, selections, mode):
         if (mode=="Pass through"):
-            return (self.tensor_bundle(images_in, range(0, self.batch)), self.latent_bundle(latent_samples_in, range(0, self.batch)),)
+            chosen = range(0, self.batch)
         elif (mode=="Take First n"):
             end = self.count if self.batch >= self.count else self.batch
-            return (self.tensor_bundle(images_in, range(0, end)), self.latent_bundle(latent_samples_in, range(0, end)),)
+            chosen = range(0, end)
         elif (mode=="Take Last n"):
             start = self.batch - self.count if self.batch - self.count >= 0 else 0
-            return (self.tensor_bundle(images_in, range(start, self.batch)), self.latent_bundle(latent_samples_in, range(start, self.batch)),)
-        good = [x for x in selections if x>=0]
-        images_out = self.tensor_bundle(images_in, good)
-        latents_out = self.latent_bundle(latent_samples_in, good)
-        return (images_out, latents_out,)
+            chosen = range(start, self.batch)
+        else:
+            chosen = [x for x in selections if x>=0]
+
+        return (self.tensor_bundle(images_in, chosen), self.latent_bundle(latent_samples_in, chosen), self.tensor_bundle(masks_in, chosen))
     
 class PreviewAndChooseDouble(PreviewAndChoose):
     RETURN_TYPES = ("LATENT","LATENT",)
@@ -119,7 +126,7 @@ class PreviewAndChooseDouble(PreviewAndChoose):
             "hidden": {"prompt": "PROMPT", "extra_pnginfo": "EXTRA_PNGINFO", "id":"UNIQUE_ID"},
         } 
 
-    def batch_up_selections(self, images_in, latent_samples_in, selections:list, mode):
+    def batch_up_selections(self, images_in, latent_samples_in, masks_in, selections:list, mode):
         divider = selections.index(-1)
         latents_out_good = self.latent_bundle(latent_samples_in, selections[:divider])
         latents_out_bad = self.latent_bundle(latent_samples_in, selections[divider+1:])
