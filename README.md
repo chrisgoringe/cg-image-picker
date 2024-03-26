@@ -20,6 +20,9 @@ This uses only regular nodes and the Unified Chooser. If you're going to try the
 
 ## Recent changes
 
+2.11 (26 March 2024)
+- added masks
+
 2.10 (12 March 2024)
 - added `Repeat last selection`
 
@@ -60,6 +63,8 @@ When the workflow pauses in the `Preview Chooser`, you click on the images to se
 Once the run finishes you can `Progress... (as restart)` to send one or more images on from the node (which has 'stashed' them).
 
 You should always have the image input connected; if you have the latent input connected, the same latents are output as images (in the same order - which is actually the order in which you selected them). I *very strongly* suggest that you always pass the latents through the `Preview Chooser` - the order of node execution, and the ability to restart, are much more reliable if you do.
+
+If you wish, you can also pass any masks used through in a similar way. You can also just pass a single mask into the chooser; it will be turned into a batch of masks the same length as the output.
 
 As you can see from the workflow, it is possible now to have multiple choosers, and to mix and match image and latent choosers.
 
