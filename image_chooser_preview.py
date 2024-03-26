@@ -7,8 +7,8 @@ import torch
 import random
 
 class PreviewAndChoose(PreviewImage):
-    RETURN_TYPES = ("IMAGE","LATENT","MASK")
-    RETURN_NAMES = ("images","latents","masks")
+    RETURN_TYPES = ("IMAGE","LATENT","MASK","STRING")
+    RETURN_NAMES = ("images","latents","masks","selected")
     FUNCTION = "func"
     CATEGORY = "image_chooser"
     INPUT_IS_LIST=True
@@ -57,7 +57,7 @@ class PreviewAndChoose(PreviewImage):
             kwargs['masks']   = my_stash.get('masks', None)
             
         if (kwargs['images'] is None):
-            return (None, None, None,)
+            return (None, None, None, "")
         
         # convert list to batch
         images_in         = torch.cat(kwargs.pop('images'))
@@ -111,7 +111,7 @@ class PreviewAndChoose(PreviewImage):
         else:
             chosen = [x for x in selections if x>=0]
 
-        return (self.tensor_bundle(images_in, chosen), self.latent_bundle(latent_samples_in, chosen), self.tensor_bundle(masks_in, chosen))
+        return (self.tensor_bundle(images_in, chosen), self.latent_bundle(latent_samples_in, chosen), self.tensor_bundle(masks_in, chosen), ",".join(str(x) for x in chosen), )
     
 class PreviewAndChooseDouble(PreviewAndChoose):
     RETURN_TYPES = ("LATENT","LATENT",)
