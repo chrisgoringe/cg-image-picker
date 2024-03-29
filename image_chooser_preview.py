@@ -62,12 +62,13 @@ class PreviewAndChoose(PreviewImage):
         # convert list to batch
         images_in         = torch.cat(kwargs.pop('images'))
         latents_in        = kwargs.pop('latents', None)
-        masks_in          = torch.cat(kwargs.pop('masks')) if kwargs.get('masks', None) is not None else None
+        masks_in          = torch.cat(kwargs.get('masks')) if kwargs.get('masks', None) is not None else None
+        kwargs.pop('masks', None)
         latent_samples_in = torch.cat(list(l['samples'] for l in latents_in)) if latents_in is not None else None
         self.batch        = images_in.shape[0]
 
         # any other parameters shouldn't be lists any more...
-        for x in kwargs: kwargs[x] = kwargs[x][0]
+        for x in kwargs: kwargs[x] = kwargs[x][0] if kwargs[x] is not None else None
  
         # call PreviewImage base
         ret = self.save_images(images=images_in, **kwargs)
