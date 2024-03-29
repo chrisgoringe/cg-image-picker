@@ -68,7 +68,7 @@ class PreviewAndChoose(PreviewImage):
         self.batch        = images_in.shape[0]
 
         # any other parameters shouldn't be lists any more...
-        for x in kwargs: kwargs[x] = kwargs[x][0] if kwargs[x] is not None else None
+        for x in kwargs: kwargs[x] = kwargs[x][0]
  
         # call PreviewImage base
         ret = self.save_images(images=images_in, **kwargs)
