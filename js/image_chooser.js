@@ -46,14 +46,13 @@ function keyListener(event) {
     if (!app.ui.settings.getSettingValue('ImageChooser.hotkeys', true)) return;
     if (!FlowState.paused()) return;
     const node = app.graph._nodes_by_id[app.runningNodeId];
-    if (event.key==="0") {
+    if (event.key===app.ui.settings.getSettingValue('ImageChooser.hotkeys.0', "0")) {
         if (node.selected && node.selected.size>0) send_message(node.id, [...node.selected, -1, ...node.anti_selected]); 
         else send_cancel();
     }
-    if ("123456789".includes(event.key)) {
-        const idx = parseInt(event.key)-1;
-        if (node.imgs && node.imgs.length > idx) node.imageClicked(idx);
-    }
+    const im_choice = app.ui.settings.getSettingValue('ImageChooser.hotkeys.1to8', "12345678")
+    const idx = im_choice.indexOf(event.key)
+    if (idx>=0) if (node.imgs && node.imgs.length > idx) node.imageClicked(idx); 
 }
 
 app.registerExtension({
@@ -127,6 +126,18 @@ app.registerExtension({
             type: "boolean",
             defaultValue: true,
         });
+        app.ui.settings.addSetting({
+            id: "ImageChooser.hotkeys.0",
+            name: "Image Chooser: cancel/progress hotkey",
+            type: "text",
+            defaultValue: "0",
+        });        
+        app.ui.settings.addSetting({
+            id: "ImageChooser.hotkeys.1to8",
+            name: "Image Chooser: image choice hotkeys",
+            type: "text",
+            defaultValue: "12345678",
+        });   
         app.ui.settings.addSetting({
             id: "ImageChooser.alert",
             name: "Image Chooser: enable alert",

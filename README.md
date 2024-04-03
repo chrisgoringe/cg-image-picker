@@ -20,6 +20,9 @@ This uses only regular nodes and the Unified Chooser. If you're going to try the
 
 ## Recent changes
 
+2.12 (4 April 2024)
+- configure hotkeys
+
 2.11 (26 March 2024)
 - added masks
 
@@ -60,13 +63,11 @@ This uses only regular nodes and the Unified Chooser. If you're going to try the
 
 When the workflow pauses in the `Preview Chooser`, you click on the images to select / unselect them - selected images are marked with a green box. When there are one or more images selected, you can `Progress selected images` to send them out. You can cancel the run from the right-click menu on the background canvas.
 
-Once the run finishes you can `Progress... (as restart)` to send one or more images on from the node (which has 'stashed' them).
+Once the run finishes you can `Progress... (as restart)` to send one or more images on from the node (which has 'stashed' them). [NB _this is no longer being actively supported - if it breaks, it breaks, and it may be removed_]
 
 You should always have the image input connected; if you have the latent input connected, the same latents are output as images (in the same order - which is actually the order in which you selected them). I *very strongly* suggest that you always pass the latents through the `Preview Chooser` - the order of node execution, and the ability to restart, are much more reliable if you do.
 
 If you wish, you can also pass any masks used through in a similar way. You can also just pass a single mask into the chooser; it will be turned into a batch of masks the same length as the output.
-
-As you can see from the workflow, it is possible now to have multiple choosers, and to mix and match image and latent choosers.
 
 You can control the position of the HUD (in the top left) using the main settings menu.
 
@@ -76,6 +77,8 @@ The following hotkeys are active *only when the flow is paused in a Preview Choo
 
 - `1...9` click image number `n`
 - `0` click `progress selected images` if any are selected, or `cancel current run` if none selected
+
+These hotkeys can be changed in the settings menu.
 
 ## Alert sound
 
@@ -101,11 +104,11 @@ But the way ComfyUI works is that all the widget values get sent to the server a
 
 The exception is the chooser nodes themselves. They communicate directly with the server when you press 'go'. So their values when you started the run (which were sent to the server) are ignored in favour of the ones sent when you pressed 'go' to continue the workflow. 
 
-But you *can* change widgets and then do a `Progress... (as restart)` 
-
 But you *can* use `Repeat last selection`
 
 ## Preview Chooser Fabric
+
+_Note that I am no longer actively supporting this, and if it breaks it may well be removed_
 
 This node is designed for use with the [Fabric custom nodes](https://github.com/ssitu/ComfyUI_fabric), which allow you to pass latents you like and dislike from one iteration into a sampler which uses that information as a conditioning.
 
