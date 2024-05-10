@@ -20,6 +20,9 @@ This uses only regular nodes and the Unified Chooser. If you're going to try the
 
 ## Recent changes
 
+2.13 (10 May 2024)
+- [lakmeer](https://github.com/lakmeer) added Cancel on queue 
+
 2.12 (4 April 2024)
 - configure hotkeys
 
@@ -95,6 +98,10 @@ There's a ping when the chooser node is waiting. You can turn in off in the main
 - `Take Last n`. Pass the last `n` images
 
 The last three are only really for some fairly special cases!
+
+## Cancel on Queue
+
+If you set this option (in the main settings), then a paused workflow will cancel when you press the queue button. Thanks to [lakmeer](https://github.com/lakmeer) for the PR.
 
 ## No, you can't change other widgets while it's waiting (but you can restart)
 
