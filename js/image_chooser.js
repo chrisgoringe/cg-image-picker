@@ -106,17 +106,45 @@ app.registerExtension({
                 })
             } 
         } 
+
         api.addEventListener("execution_start", on_execution_start);
 
+        /*
+        Cancel-on-Queue
+        */
+        function on_execution_interrupted() {
+            if (app.ui.settings.getSettingValue("ImageChooser.cancelOnQueue", true)) {
+                if (FlowState.paused()) send_cancel();
+            }
+        }
+
+        function intercept_queue_triggers() {
+            if (app.ui.settings.getSettingValue("ImageChooser.cancelOnQueue", true)) {
+               if (FlowState.paused()) api.interrupt();
+            }
+        }
+
+        api.addEventListener("execution_interrupted", on_execution_interrupted);
+
+        document.getElementById("queue-button").addEventListener("click", intercept_queue_triggers);
+        document.addEventListener("keydown", function (event) {
+            if (event.key == "Enter" && event.ctrlKey) {
+                intercept_queue_triggers();
+            }
+        })
+
+        /*
+        Additional settings
+        */
         app.ui.settings.addSetting({
             id: "ImageChooser.hudpos",
             name: "Image Chooser HUD position (-1 for off)",
             type: "slider",
-			attrs: {
-				min: -1,
-				max: 500,
-				step: 1,
-			},
+            attrs: {
+              min: -1,
+              max: 500,
+              step: 1,
+            },
             defaultValue: 10,
             onChange: (newVal, oldVal) => { hud.move(newVal); }
         });
@@ -143,6 +171,12 @@ app.registerExtension({
             name: "Image Chooser: enable alert",
             type: "boolean",
             defaultValue: true,
+        });
+        app.ui.settings.addSetting({
+            id: "ImageChooser.cancelOnQueue",
+            name: "Image Chooser: cancel when a new prompt is queued",
+            type: "boolean",
+            defaultValue: false,
         });
     },
 
