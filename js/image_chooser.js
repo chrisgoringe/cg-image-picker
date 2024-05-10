@@ -176,7 +176,7 @@ app.registerExtension({
             id: "ImageChooser.cancelOnQueue",
             name: "Image Chooser: cancel when a new prompt is queued",
             type: "boolean",
-            defaultValue: true,
+            defaultValue: false,
         });
     },
 
