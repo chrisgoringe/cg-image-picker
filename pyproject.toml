@@ -8,6 +8,6 @@ license = "LICENSE"
 Repository = "https://github.com/chrisgoringe/cg-image-picker"
 
 [tool.comfy]
-PublisherId = ""
+PublisherId = "chrisgoringe"
 DisplayName = "cg-image-picker"
 Icon = ""
