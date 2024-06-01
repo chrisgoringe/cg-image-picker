@@ -144,6 +144,19 @@ app.registerExtension({
             onChange: (newValue) => { hud.setVisibility(newValue); }
         });
         app.ui.settings.addSetting({
+            id: "ImageChooser.hudSide",
+            name: "Image Chooser HUD: side",
+            type: "combo",
+            options: [{
+                text:"Left",
+                value: "left"
+            },{
+                text: "Right",
+                value: "right"
+            }],
+            onChange: (newValue) => { hud.setSide(newValue); }
+        })
+        app.ui.settings.addSetting({
             id: "ImageChooser.hudpos",
             name: "Image Chooser HUD: vertical position (from the top)",
             type: "slider",

@@ -6,13 +6,16 @@ class HUD {
     #VISIBLE_OPACITY = 0.8;
     #INVISIBLE_OPACITY = 0;
 
+    // define side offset placeholder
+    #sideOffset = 10;
+
     constructor() {
         this.span = $el("span", { style: { color:"white" }, textContent: "" });
         this.hud = $el("div", {
             style: { 
                 "position": "fixed", 
                 "top":"10px", 
-                "left":"10px", 
+                "left": this.#sideOffset + "px", 
                 "border":"thin solid #f66", 
                 "padding":"8px", 
                 "opacity": this.#VISIBLE_OPACITY,
@@ -35,6 +38,16 @@ class HUD {
 
     setVisibility(newVisibility) {
         this.hud.style.opacity = newVisibility ? this.#VISIBLE_OPACITY : this.#INVISIBLE_OPACITY;
+    }
+
+    setSide(newSide) {
+        const oldSide = newSide === "left" ? "right" : "left";
+
+        console.log(this.hud.style[oldSide], this.hud.style[newSide]);
+
+        // swap then remove the value as the side is changed
+        this.hud.style[newSide] = this.#sideOffset + "px";
+        this.hud.style[oldSide] = "";
     }
 
     update() {
