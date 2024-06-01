@@ -145,15 +145,15 @@ app.registerExtension({
         });
         app.ui.settings.addSetting({
             id: "ImageChooser.hudpos",
-            name: "Image Chooser HUD position (-1 for off)",
+            name: "Image Chooser HUD: vertical position",
             type: "slider",
             attrs: {
-                min: -1,
+                min: 0,
                 max: 500,
                 step: 1,
             },
             defaultValue: 10,
-            onChange: (newVal, oldVal) => { hud.move(newVal); }
+            onChange: (newVal) => { hud.move(newVal); }
         });
         app.ui.settings.addSetting({
             id: "ImageChooser.hotkeys",
