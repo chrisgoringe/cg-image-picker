@@ -2,16 +2,24 @@ import { $el } from "../../scripts/ui.js";
 import { app } from "../../scripts/app.js";
 
 class HUD {
+    // define style "constants"
+    #VISIBLE_OPACITY = 0.8;
+    #INVISIBLE_OPACITY = 0;
+
+    // define side and offset placeholders and defaults
+    #side = "left";
+    #sideOffset = 10;
+
     constructor() {
         this.span = $el("span", { style: { color:"white" }, textContent: "" });
         this.hud = $el("div", {
             style: { 
                 "position": "fixed", 
                 "top":"10px", 
-                "left":"10px", 
+                "left": this.#sideOffset + "px", 
                 "border":"thin solid #f66", 
                 "padding":"8px", 
-                "opacity":0.8,
+                "opacity": this.#VISIBLE_OPACITY,
             }},
             [
                 this.span
@@ -25,9 +33,26 @@ class HUD {
         this.current_node_is_chooser = false;
     }
 
-    move(newtop) {
+    moveHorizontalPosition(newHorizontalOffset) {
+        this.#sideOffset = newHorizontalOffset;
+
+        this.hud.style[this.#side] = this.#sideOffset + "px";
+    }
+
+    moveVerticalPosition(newtop) {
         this.hud.style.top = `${newtop}px`;
-        this.hud.style.opacity = newtop>=0 ? 0.8 : 0;
+    }
+
+    setVisibility(newVisibility) {
+        this.hud.style.opacity = newVisibility ? this.#VISIBLE_OPACITY : this.#INVISIBLE_OPACITY;
+    }
+
+    setSide(newSide) {
+        this.#side = newSide;
+        const oldSide = newSide === "left" ? "right" : "left";
+        
+        this.hud.style[newSide] = this.#sideOffset + "px";
+        this.hud.style[oldSide] = "";
     }
 
     update() {

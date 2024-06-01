@@ -120,7 +120,7 @@ app.registerExtension({
 
         function intercept_queue_triggers() {
             if (app.ui.settings.getSettingValue("ImageChooser.cancelOnQueue", true)) {
-               if (FlowState.paused()) api.interrupt();
+                if (FlowState.paused()) api.interrupt();
             }
         }
 
@@ -137,16 +137,48 @@ app.registerExtension({
         Additional settings
         */
         app.ui.settings.addSetting({
-            id: "ImageChooser.hudpos",
-            name: "Image Chooser HUD position (-1 for off)",
+            id: "ImageChooser.hudVisbility",
+            name: "Image Chooser HUD: show / hide",
+            type: "boolean",
+            defaultValue: true,
+            onChange: (newValue) => { hud.setVisibility(newValue); }
+        });
+        app.ui.settings.addSetting({
+            id: "ImageChooser.hudSide",
+            name: "Image Chooser HUD: horizontal side",
+            type: "combo",
+            options: [{
+                text:"Left",
+                value: "left"
+            },{
+                text: "Right",
+                value: "right"
+            }],
+            onChange: (newValue) => { hud.setSide(newValue); }
+        });
+        app.ui.settings.addSetting({
+            id: "ImageChooser.hudHPos",
+            name: "Image Chooser HUD: horizontal position (from the selected side)",
             type: "slider",
             attrs: {
-              min: -1,
-              max: 500,
-              step: 1,
+                min: 0,
+                max: 500,
+                step: 1
             },
             defaultValue: 10,
-            onChange: (newVal, oldVal) => { hud.move(newVal); }
+            onChange: (newValue) => { hud.moveHorizontalPosition(newValue); } 
+        });
+        app.ui.settings.addSetting({
+            id: "ImageChooser.hudpos",
+            name: "Image Chooser HUD: vertical position (from the top)",
+            type: "slider",
+            attrs: {
+                min: 0,
+                max: 500,
+                step: 1,
+            },
+            defaultValue: 10,
+            onChange: (newVal) => { hud.moveVerticalPosition(newVal); }
         });
         app.ui.settings.addSetting({
             id: "ImageChooser.hotkeys",
