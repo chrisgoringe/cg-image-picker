@@ -120,7 +120,7 @@ app.registerExtension({
 
         function intercept_queue_triggers() {
             if (app.ui.settings.getSettingValue("ImageChooser.cancelOnQueue", true)) {
-               if (FlowState.paused()) api.interrupt();
+                if (FlowState.paused()) api.interrupt();
             }
         }
 
@@ -141,9 +141,9 @@ app.registerExtension({
             name: "Image Chooser HUD position (-1 for off)",
             type: "slider",
             attrs: {
-              min: -1,
-              max: 500,
-              step: 1,
+                min: -1,
+                max: 500,
+                step: 1,
             },
             defaultValue: 10,
             onChange: (newVal, oldVal) => { hud.move(newVal); }
