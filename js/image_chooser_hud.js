@@ -2,6 +2,10 @@ import { $el } from "../../scripts/ui.js";
 import { app } from "../../scripts/app.js";
 
 class HUD {
+    // define style "constants"
+    #VISIBLE_OPACITY = 0.8;
+    #INVISIBLE_OPACITY = 0;
+
     constructor() {
         this.span = $el("span", { style: { color:"white" }, textContent: "" });
         this.hud = $el("div", {
@@ -11,7 +15,7 @@ class HUD {
                 "left":"10px", 
                 "border":"thin solid #f66", 
                 "padding":"8px", 
-                "opacity":0.8,
+                "opacity": this.#VISIBLE_OPACITY,
             }},
             [
                 this.span
@@ -27,7 +31,10 @@ class HUD {
 
     move(newtop) {
         this.hud.style.top = `${newtop}px`;
-        this.hud.style.opacity = newtop>=0 ? 0.8 : 0;
+    }
+
+    setVisibility(newVisibility) {
+        this.hud.style.opacity = newVisibility ? this.#VISIBLE_OPACITY : this.#INVISIBLE_OPACITY;
     }
 
     update() {

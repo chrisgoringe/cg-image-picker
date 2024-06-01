@@ -137,6 +137,13 @@ app.registerExtension({
         Additional settings
         */
         app.ui.settings.addSetting({
+            id: "ImageChooser.hudVisbility",
+            name: "Image Chooser HUD: show / hide",
+            type: "boolean",
+            defaultValue: true,
+            onChange: (newValue) => { hud.setVisibility(newValue); }
+        });
+        app.ui.settings.addSetting({
             id: "ImageChooser.hudpos",
             name: "Image Chooser HUD position (-1 for off)",
             type: "slider",
