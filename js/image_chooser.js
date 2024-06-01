@@ -145,7 +145,7 @@ app.registerExtension({
         });
         app.ui.settings.addSetting({
             id: "ImageChooser.hudSide",
-            name: "Image Chooser HUD: side",
+            name: "Image Chooser HUD: horizontal side",
             type: "combo",
             options: [{
                 text:"Left",
@@ -155,7 +155,19 @@ app.registerExtension({
                 value: "right"
             }],
             onChange: (newValue) => { hud.setSide(newValue); }
-        })
+        });
+        app.ui.settings.addSetting({
+            id: "ImageChooser.hudHPos",
+            name: "Image Chooser HUD: horizontal position (from the selected side)",
+            type: "slider",
+            attrs: {
+                min: 0,
+                max: 500,
+                step: 1
+            },
+            defaultValue: 10,
+            onChange: (newValue) => { hud.moveHorizontalPosition(newValue); } 
+        });
         app.ui.settings.addSetting({
             id: "ImageChooser.hudpos",
             name: "Image Chooser HUD: vertical position (from the top)",
@@ -166,7 +178,7 @@ app.registerExtension({
                 step: 1,
             },
             defaultValue: 10,
-            onChange: (newVal) => { hud.move(newVal); }
+            onChange: (newVal) => { hud.moveVerticalPosition(newVal); }
         });
         app.ui.settings.addSetting({
             id: "ImageChooser.hotkeys",

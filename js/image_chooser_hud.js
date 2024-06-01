@@ -6,7 +6,8 @@ class HUD {
     #VISIBLE_OPACITY = 0.8;
     #INVISIBLE_OPACITY = 0;
 
-    // define side offset placeholder
+    // define side and offset placeholders and defaults
+    #side = "left";
     #sideOffset = 10;
 
     constructor() {
@@ -32,7 +33,13 @@ class HUD {
         this.current_node_is_chooser = false;
     }
 
-    move(newtop) {
+    moveHorizontalPosition(newHorizontalOffset) {
+        this.#sideOffset = newHorizontalOffset;
+
+        this.hud.style[this.#side] = this.#sideOffset + "px";
+    }
+
+    moveVerticalPosition(newtop) {
         this.hud.style.top = `${newtop}px`;
     }
 
@@ -41,11 +48,9 @@ class HUD {
     }
 
     setSide(newSide) {
+        this.#side = newSide;
         const oldSide = newSide === "left" ? "right" : "left";
-
-        console.log(this.hud.style[oldSide], this.hud.style[newSide]);
-
-        // swap then remove the value as the side is changed
+        
         this.hud.style[newSide] = this.#sideOffset + "px";
         this.hud.style[oldSide] = "";
     }
