@@ -145,7 +145,7 @@ app.registerExtension({
         });
         app.ui.settings.addSetting({
             id: "ImageChooser.hudpos",
-            name: "Image Chooser HUD: vertical position",
+            name: "Image Chooser HUD: vertical position (from the top)",
             type: "slider",
             attrs: {
                 min: 0,
