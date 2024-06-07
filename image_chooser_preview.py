@@ -114,6 +114,26 @@ class PreviewAndChoose(PreviewImage):
 
         return (self.tensor_bundle(images_in, chosen), self.latent_bundle(latent_samples_in, chosen), self.tensor_bundle(masks_in, chosen), ",".join(str(x) for x in chosen), )
     
+class SimpleChooser(PreviewAndChoose):
+    RETURN_TYPES = ("IMAGE","LATENT",)
+    RETURN_NAMES = ("images","latents",)
+    FUNCTION = "func"
+    CATEGORY = "image_chooser"
+    INPUT_IS_LIST=True
+    OUTPUT_NODE = False
+    last_ic = {}
+    @classmethod
+    def INPUT_TYPES(s):
+        return {
+            "required": { "images": ("IMAGE", ),   },
+            "optional": { "latents": ("LATENT", ), },
+            "hidden": {"prompt": "PROMPT", "extra_pnginfo": "EXTRA_PNGINFO", "id":"UNIQUE_ID"},
+        }
+
+    def func(self, **kwargs):
+        return super().func(**kwargs)[0:2]
+
+
 class PreviewAndChooseDouble(PreviewAndChoose):
     RETURN_TYPES = ("LATENT","LATENT",)
     RETURN_NAMES = ("positive","negative",)
