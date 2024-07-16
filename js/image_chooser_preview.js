@@ -1,4 +1,5 @@
 import { app } from "../../scripts/app.js";
+import { api } from "../../scripts/api.js";
 
 function display_preview_images(event) {
     const node = app.graph._nodes_by_id[event.detail.id];

@@ -63,6 +63,7 @@ class HUD {
         if (this.current_node_id) {
             this.class_of_current_node = app.graph?._nodes_by_id[app.runningNodeId.toString()]?.comfyClass;
             this.current_node_is_chooser = (this.class_of_current_node === "Preview Chooser Fabric" || 
+                                            this.class_of_current_node === "Simple Chooser" ||
                                             this.class_of_current_node === "Preview Chooser");
             this.span.textContent = `${FlowState.state()} in ${this.class_of_current_node} (${this.current_node_id}) `;
         } else {

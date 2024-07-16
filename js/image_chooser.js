@@ -213,7 +213,7 @@ app.registerExtension({
     },
 
     async nodeCreated(node) {
-        if (node?.comfyClass === "Preview Chooser" || node?.comfyClass === "Preview Chooser Fabric") {
+        if (node?.comfyClass === "Preview Chooser" || node?.comfyClass === "Preview Chooser Fabric"|| node?.comfyClass === "Simple Chooser") {
             /* Don't allow imageIndex to be set - this stops images jumping to the front when clicked */
             Object.defineProperty(node, 'imageIndex', {
                 get : function() { return null; },
@@ -254,7 +254,7 @@ app.registerExtension({
         }
     },
     async beforeRegisterNodeDef(nodeType, nodeData, app) {
-        if (nodeType?.comfyClass==="Preview Chooser" || nodeType?.comfyClass === "Preview Chooser Fabric") {
+        if (nodeType?.comfyClass==="Preview Chooser" || nodeType?.comfyClass==="Simple Chooser" || nodeType?.comfyClass === "Preview Chooser Fabric") {
 
             /* Code to draw the boxes around selected images */
             const onDrawBackground = nodeType.prototype.onDrawBackground;
@@ -265,7 +265,7 @@ app.registerExtension({
 
             /* Code to handle clicks on images */
             nodeType.prototype.imageClicked = function (imageIndex) {
-                if (nodeType?.comfyClass==="Preview Chooser") {
+                if (nodeType?.comfyClass==="Preview Chooser" || nodeType?.comfyClass==="Simple Chooser") {
                     if (this.selected.has(imageIndex)) this.selected.delete(imageIndex);
                     else this.selected.add(imageIndex);
                     if (this.widgets[0]?.value==="Progress first pick") send_message(this.id, [...this.selected, -1, ...this.anti_selected]); 
@@ -291,7 +291,7 @@ app.registerExtension({
                     const selection = ( this.selected ? this.selected.size : 0 ) + ( this.anti_selected ? this.anti_selected.size : 0 )
                     if (FlowState.paused_here(this.id) && selection>0) {
                         this.send_button_widget.name = (selection>1) ? "Progress selected images" : "Progress selected image";
-                    } else if (FlowState.idle() && selection>0) {
+                    } else if (FlowState.idle() && selection>0 && (nodeType?.comfyClass === "Preview Chooser" || nodeType?.comfyClass === "Preview Chooser Fabric")) {
                         this.send_button_widget.name = (selection>1) ? "Progress selected images as restart" : "Progress selected image as restart";
                     } else if (FlowState.paused_here(this.id) && selection==0 && nodeType?.comfyClass === "Preview Chooser Fabric") {
                         this.send_button_widget.name = "Progress with nothing selected";
