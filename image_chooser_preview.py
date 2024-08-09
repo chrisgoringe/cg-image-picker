@@ -7,8 +7,8 @@ import torch
 import random
 
 class PreviewAndChoose(PreviewImage):
-    RETURN_TYPES = ("IMAGE","LATENT","MASK","STRING")
-    RETURN_NAMES = ("images","latents","masks","selected")
+    RETURN_TYPES = ("IMAGE","LATENT","MASK","STRING","SEGS")
+    RETURN_NAMES = ("images","latents","masks","selected","segs")
     FUNCTION = "func"
     CATEGORY = "image_chooser"
     INPUT_IS_LIST=True
@@ -21,7 +21,7 @@ class PreviewAndChoose(PreviewImage):
                 "mode" : (["Always pause", "Repeat last selection", "Only pause if batch", "Progress first pick", "Pass through", "Take First n", "Take Last n"],{}),
 				"count": ("INT", { "default": 1, "min": 1, "max": 999, "step": 1 }),
             },
-            "optional": {"images": ("IMAGE", ), "latents": ("LATENT", ), "masks": ("MASK", ) },
+            "optional": {"images": ("IMAGE", ), "latents": ("LATENT", ), "masks": ("MASK", ), "segs":("SEGS", ) },
             "hidden": {"prompt": "PROMPT", "extra_pnginfo": "EXTRA_PNGINFO", "id":"UNIQUE_ID"},
         }
 
@@ -46,6 +46,8 @@ class PreviewAndChoose(PreviewImage):
             MessageHolder.stash[id] = {}
         my_stash = MessageHolder.stash[id]
 
+        DOING_SEGS = 'segs' in kwargs
+
         # enable stashing. If images is None, we are operating in read-from-stash mode
         if 'images' in kwargs:
             my_stash['images']  = kwargs['images']
@@ -60,12 +62,13 @@ class PreviewAndChoose(PreviewImage):
             return (None, None, None, "")
         
         # convert list to batch
-        images_in         = torch.cat(kwargs.pop('images'))
+        images_in         = torch.cat(kwargs.pop('images')) if not DOING_SEGS else list(i[0,...] for i in kwargs.pop('images'))
         latents_in        = kwargs.pop('latents', None)
         masks_in          = torch.cat(kwargs.get('masks')) if kwargs.get('masks', None) is not None else None
+        segs_in           = kwargs.pop('segs', None)
         kwargs.pop('masks', None)
         latent_samples_in = torch.cat(list(l['samples'] for l in latents_in)) if latents_in is not None else None
-        self.batch        = images_in.shape[0]
+        self.batch        = images_in.shape[0] if not DOING_SEGS else len(images_in)
 
         # any other parameters shouldn't be lists any more...
         for x in kwargs: kwargs[x] = kwargs[x][0]
@@ -84,6 +87,10 @@ class PreviewAndChoose(PreviewImage):
         except Cancelled:
             raise InterruptProcessingException()
             #return (None, None,)
+        
+        if DOING_SEGS: 
+            segs_out = (segs_in[0][0], list(segs_in[0][1][i] for i in selections if i>=0) )
+            return(None, None, None, None, segs_out)
         
         return self.batch_up_selections(images_in=images_in, latent_samples_in=latent_samples_in, masks_in=masks_in, selections=selections, mode=mode)
 
@@ -112,7 +119,7 @@ class PreviewAndChoose(PreviewImage):
         else:
             chosen = [x for x in selections if x>=0]
 
-        return (self.tensor_bundle(images_in, chosen), self.latent_bundle(latent_samples_in, chosen), self.tensor_bundle(masks_in, chosen), ",".join(str(x) for x in chosen), )
+        return (self.tensor_bundle(images_in, chosen), self.latent_bundle(latent_samples_in, chosen), self.tensor_bundle(masks_in, chosen), ",".join(str(x) for x in chosen), None, )
     
 class SimpleChooser(PreviewAndChoose):
     RETURN_TYPES = ("IMAGE","LATENT",)
