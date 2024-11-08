@@ -10,11 +10,11 @@ function progressButtonPressed() {
     const node = app.graph._nodes_by_id[this.node_id];
     if (this.name!='') {
         if (FlowState.paused()) {
-            send_message(node.id, [...node.selected, -1, ...node.anti_selected]); 
+            send_message(node.id, [...node._ic_selected, -1, ...node.anti__ic_selected]); 
         }
         if (FlowState.idle()) {
             skip_next_restart_message();
-            restart_from_here(node.id).then(() => { send_message(node.id, [...node.selected, -1, ...node.anti_selected]); });
+            restart_from_here(node.id).then(() => { send_message(node.id, [...node._ic_selected, -1, ...node.anti__ic_selected]); });
         }
     }
 }
@@ -47,7 +47,7 @@ function keyListener(event) {
     if (!FlowState.paused()) return;
     const node = app.graph._nodes_by_id[app.runningNodeId];
     if (event.key===app.ui.settings.getSettingValue('ImageChooser.hotkeys.0', "0")) {
-        if (node.selected && node.selected.size>0) send_message(node.id, [...node.selected, -1, ...node.anti_selected]); 
+        if (node._ic_selected && node._ic_selected.size>0) send_message(node.id, [...node._ic_selected, -1, ...node.anti__ic_selected]); 
         else send_cancel();
     }
     const im_choice = app.ui.settings.getSettingValue('ImageChooser.hotkeys.1to8', "12345678")
@@ -98,9 +98,9 @@ app.registerExtension({
         function on_execution_start() {
             if (send_onstart()) {
                 app.graph._nodes.forEach((node)=> { 
-                    if (node.selected || node.anti_selected) { 
-                        node.selected.clear();
-                        node.anti_selected.clear();
+                    if (node._ic_selected || node.anti__ic_selected) { 
+                        node._ic_selected.clear();
+                        node.anti__ic_selected.clear();
                         node.update(); 
                     } 
                 })
@@ -214,6 +214,7 @@ app.registerExtension({
 
     async nodeCreated(node) {
         if (node?.comfyClass === "Preview Chooser" || node?.comfyClass === "Preview Chooser Fabric"|| node?.comfyClass === "Simple Chooser") {
+            node.isImageChooser = true
             /* Don't allow imageIndex to be set - this stops images jumping to the front when clicked */
             Object.defineProperty(node, 'imageIndex', {
                 get : function() { return null; },
@@ -266,17 +267,17 @@ app.registerExtension({
             /* Code to handle clicks on images */
             nodeType.prototype.imageClicked = function (imageIndex) {
                 if (nodeType?.comfyClass==="Preview Chooser" || nodeType?.comfyClass==="Simple Chooser") {
-                    if (this.selected.has(imageIndex)) this.selected.delete(imageIndex);
-                    else this.selected.add(imageIndex);
-                    if (this.widgets[0]?.value==="Progress first pick") send_message(this.id, [...this.selected, -1, ...this.anti_selected]); 
+                    if (this._ic_selected.has(imageIndex)) this._ic_selected.delete(imageIndex);
+                    else this._ic_selected.add(imageIndex);
+                    if (this.widgets[0]?.value==="Progress first pick") send_message(this.id, [...this._ic_selected, -1, ...this.anti__ic_selected]); 
                 } else {
-                    if (this.selected.has(imageIndex)) {
-                        this.selected.delete(imageIndex);
-                        this.anti_selected.add(imageIndex);
-                    } else if (this.anti_selected.has(imageIndex)) {
-                        this.anti_selected.delete(imageIndex);
+                    if (this._ic_selected.has(imageIndex)) {
+                        this._ic_selected.delete(imageIndex);
+                        this.anti__ic_selected.add(imageIndex);
+                    } else if (this.anti__ic_selected.has(imageIndex)) {
+                        this.anti__ic_selected.delete(imageIndex);
                     } else {
-                        this.selected.add(imageIndex);
+                        this._ic_selected.add(imageIndex);
                     }
                 }
                 this.update();
@@ -288,7 +289,7 @@ app.registerExtension({
                 if (update) update.apply(this,arguments);
                 if (this.send_button_widget) {
                     this.send_button_widget.node_id = this.id;
-                    const selection = ( this.selected ? this.selected.size : 0 ) + ( this.anti_selected ? this.anti_selected.size : 0 )
+                    const selection = ( this._ic_selected ? this._ic_selected.size : 0 ) + ( this.anti__ic_selected ? this.anti__ic_selected.size : 0 )
                     if (FlowState.paused_here(this.id) && selection>0) {
                         this.send_button_widget.name = (selection>1) ? "Progress selected images" : "Progress selected image";
                     } else if (FlowState.idle() && selection>0 && (nodeType?.comfyClass === "Preview Chooser" || nodeType?.comfyClass === "Preview Chooser Fabric")) {

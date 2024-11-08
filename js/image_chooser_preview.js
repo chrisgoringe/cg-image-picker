@@ -3,9 +3,9 @@ import { api } from "../../scripts/api.js";
 
 function display_preview_images(event) {
     const node = app.graph._nodes_by_id[event.detail.id];
-    if (node) {
-        node.selected = new Set();
-        node.anti_selected = new Set();
+    if (node?.isImageChooser) {
+        node._ic_selected = new Set();
+        node.anti__ic_selected = new Set();
         showImages(node, event.detail.urls);
     } else {
         console.log(`Image Chooser Preview - failed to find ${event.detail.id}`)
@@ -65,9 +65,9 @@ function additionalDrawBackground(node, ctx) {
     }
     ctx.lineWidth = 2;
     ctx.strokeStyle = "#8F8";
-    node?.selected?.forEach((s) => { drawRect(node,s, ctx) })
+    node?._ic_selected?.forEach((s) => { drawRect(node,s, ctx) })
     ctx.strokeStyle = "#F88";
-    node?.anti_selected?.forEach((s) => { drawRect(node,s, ctx) })
+    node?.anti__ic_selected?.forEach((s) => { drawRect(node,s, ctx) })
 }
 
 function click_is_in_image(node, pos) {
