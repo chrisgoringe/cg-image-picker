@@ -27,7 +27,7 @@ class PreviewAndChoose(PreviewImage):
 
     @classmethod
     def IS_CHANGED(cls, id, **kwargs):
-        mode = kwargs.get("mode","")
+        mode = kwargs.get("mode",["Always pause"])
         if (mode[0]!="Repeat last selection" or not id[0] in cls.last_ic): cls.last_ic[id[0]] = random.random()
         return cls.last_ic[id[0]]
 
