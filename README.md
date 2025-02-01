@@ -1,3 +1,8 @@
+# DEPRECATED
+
+This node pack is no longer under active development. Most of the functionality (and lots of new stuff) can 
+be found in the new node pack [Image Filter](https://github.com/chrisgoringe/cg-image-filter)
+
 # Image Chooser
 
 Love this node? [Buy me a coffee!](https://www.buymeacoffee.com/chrisgoringe)
