@@ -91,9 +91,7 @@ class PreviewAndChoose(PreviewImage):
             #return (None, None,)
         
         if DOING_SEGS:
-            # first sort out individual segs according to the indices
-            # then merge them into a final list, keeping the original order
-            segs_out = {}
+            segs_out = [(segs_in[i][0], []) for i in range(len(segs_in))]
             segs_outer_index = 0
             segs_inner_index = 0
 
@@ -101,10 +99,7 @@ class PreviewAndChoose(PreviewImage):
                 segs_inner_list = segs_in[segs_outer_index][1]
 
                 if i in selections:
-                    if segs_outer_index not in segs_out:
-                        segs_out[segs_outer_index] = (segs_in[segs_outer_index][0], [segs_inner_list[segs_inner_index]])
-                    else:
-                        segs_out[segs_outer_index][1].append(segs_inner_list[segs_inner_index])
+                    segs_out[segs_outer_index][1].append(segs_inner_list[segs_inner_index])
 
                 segs_inner_index += 1
 
@@ -112,8 +107,7 @@ class PreviewAndChoose(PreviewImage):
                     segs_outer_index += 1
                     segs_inner_index = 0
 
-            segs_out_merged = list(segs_out.values())
-            return(None, None, None, None, segs_out_merged)
+            return(None, None, None, None, segs_out)
         
         return self.batch_up_selections(images_in=images_in, latent_samples_in=latent_samples_in, masks_in=masks_in, selections=selections, mode=mode)
 
