@@ -11,7 +11,8 @@ class PreviewAndChoose(PreviewImage):
     RETURN_NAMES = ("images","latents","masks","selected","segs")
     FUNCTION = "func"
     CATEGORY = "image_chooser"
-    INPUT_IS_LIST=True
+    INPUT_IS_LIST = True
+    OUTPUT_IS_LIST = (False,False,False,False,True)
     OUTPUT_NODE = False
     last_ic = {}
     @classmethod
@@ -60,7 +61,7 @@ class PreviewAndChoose(PreviewImage):
             kwargs['masks']   = my_stash.get('masks', None)
             
         if (kwargs['images'] is None):
-            return (None, None, None, "")
+            return (None, None, None, "", [])
         
         # convert list to batch
         images_in         = torch.cat(kwargs.pop('images')) if not DOING_SEGS else list(i[0,...] for i in kwargs.pop('images'))
@@ -89,8 +90,23 @@ class PreviewAndChoose(PreviewImage):
             raise InterruptProcessingException()
             #return (None, None,)
         
-        if DOING_SEGS: 
-            segs_out = (segs_in[0][0], list(segs_in[0][1][i] for i in selections if i>=0) )
+        if DOING_SEGS:
+            segs_out = [(segs_in[i][0], []) for i in range(len(segs_in))]
+            segs_outer_index = 0
+            segs_inner_index = 0
+
+            for i in range(0, self.batch):
+                segs_inner_list = segs_in[segs_outer_index][1]
+
+                if i in selections:
+                    segs_out[segs_outer_index][1].append(segs_inner_list[segs_inner_index])
+
+                segs_inner_index += 1
+
+                if segs_inner_index == len(segs_inner_list):
+                    segs_outer_index += 1
+                    segs_inner_index = 0
+
             return(None, None, None, None, segs_out)
         
         return self.batch_up_selections(images_in=images_in, latent_samples_in=latent_samples_in, masks_in=masks_in, selections=selections, mode=mode)
@@ -120,7 +136,7 @@ class PreviewAndChoose(PreviewImage):
         else:
             chosen = [x for x in selections if x>=0]
 
-        return (self.tensor_bundle(images_in, chosen), self.latent_bundle(latent_samples_in, chosen), self.tensor_bundle(masks_in, chosen), ",".join(str(x) for x in chosen), None, )
+        return (self.tensor_bundle(images_in, chosen), self.latent_bundle(latent_samples_in, chosen), self.tensor_bundle(masks_in, chosen), ",".join(str(x) for x in chosen), [], )
     
 class SimpleChooser(PreviewAndChoose):
     RETURN_TYPES = ("IMAGE","LATENT",)
